@@ -24,12 +24,12 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 
-# ─── Reproducibility ─────────────────────────────────────────────────────────
+# --- Reproducibility ---------------------------------------------------------
 RANDOM_SEED = 42
 random.seed(RANDOM_SEED)
 np.random.seed(RANDOM_SEED)
 
-# ─── Constants ────────────────────────────────────────────────────────────────
+# --- Constants ----------------------------------------------------------------
 N_TRANSACTIONS = 10_000
 N_CUSTOMERS = 500
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'datasets')
@@ -50,9 +50,9 @@ PAYMENT_METHOD_WEIGHTS = [0.55, 0.25, 0.15, 0.05]
 
 # Amount tiers in paise (1 INR = 100 paise)
 AMOUNT_TIERS = {
-    'LOW':    (50_00, 499_99),      # ₹50 – ₹499
-    'MEDIUM': (500_00, 4999_99),    # ₹500 – ₹4,999
-    'HIGH':   (5000_00, 100000_00), # ₹5,000 – ₹1,00,000
+    'LOW':    (50_00, 499_99),      # INR 50 – INR 499
+    'MEDIUM': (500_00, 4999_99),    # INR 500 – INR 4,999
+    'HIGH':   (5000_00, 100000_00), # INR 5,000 – INR 1,00,000
 }
 AMOUNT_TIER_WEIGHTS = [0.30, 0.55, 0.15]
 
@@ -219,7 +219,7 @@ def print_statistics(df: pd.DataFrame, label: str):
     print(f"  {label} — {len(df):,} rows")
     print(f"{'='*60}")
     print(f"  Recovery rate:     {df['recovery_outcome'].mean():.1%}")
-    print(f"  Avg amount:        ₹{df['amount_paise'].mean()/100:,.0f}")
+    print(f"  Avg amount:        INR {df['amount_paise'].mean()/100:,.0f}")
     print("\n  Failure reason distribution:")
     for reason, count in df['failure_reason'].value_counts().items():
         rate = df[df['failure_reason'] == reason]['recovery_outcome'].mean()
@@ -232,10 +232,10 @@ def print_statistics(df: pd.DataFrame, label: str):
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # ── Generate full dataset ──────────────────────────────────────────────
+    # -- Generate full dataset ----------------------------------------------
     df = generate_dataset(N_TRANSACTIONS)
 
-    # ── Train / Val / Test split (70 / 15 / 15) ───────────────────────────
+    # -- Train / Val / Test split (70 / 15 / 15) ---------------------------
     df_shuffled = df.sample(frac=1, random_state=RANDOM_SEED).reset_index(drop=True)
     n = len(df_shuffled)
     train_end = int(n * 0.70)
@@ -245,7 +245,7 @@ def main():
     val   = df_shuffled.iloc[train_end:val_end]
     test  = df_shuffled.iloc[val_end:]
 
-    # ── Save splits ────────────────────────────────────────────────────────
+    # -- Save splits --------------------------------------------------------
     train_path = os.path.join(OUTPUT_DIR, 'transactions_train.csv')
     val_path   = os.path.join(OUTPUT_DIR, 'transactions_val.csv')
     test_path  = os.path.join(OUTPUT_DIR, 'transactions_test.csv')

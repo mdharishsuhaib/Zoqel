@@ -37,13 +37,13 @@ from sklearn.metrics import (
     roc_auc_score, accuracy_score, classification_report,
 )
 
-# ─── Paths ────────────────────────────────────────────────────────────────────
+# --- Paths --------------------------------------------------------------------
 SCRIPT_DIR   = os.path.dirname(os.path.abspath(__file__))
 DATASETS_DIR = os.path.join(SCRIPT_DIR, '..', 'datasets')
 MODEL_PATH   = os.path.join(SCRIPT_DIR, 'model.pkl')
 INFO_PATH    = os.path.join(SCRIPT_DIR, 'model_info.json')
 
-# ─── Feature definitions ─────────────────────────────────────────────────────
+# --- Feature definitions -----------------------------------------------------
 CATEGORICAL_FEATURES = [
     'failure_reason',
     'payment_method',
@@ -141,9 +141,9 @@ def evaluate(pipeline: Pipeline, X: pd.DataFrame, y: pd.Series, label: str) -> d
         ),
     }
 
-    print(f"\n{'─'*50}")
+    print(f"\n{'-'*50}")
     print(f"  {label} Metrics ({metrics['samples']:,} samples)")
-    print(f"{'─'*50}")
+    print(f"{'-'*50}")
     for k, v in metrics.items():
         if k not in ('label', 'samples'):
             print(f"  {k:<30} {v:.4f}")
@@ -159,24 +159,24 @@ def main():
     print(f"  Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 60)
 
-    # ── Load data ──────────────────────────────────────────────────────────
+    # -- Load data ----------------------------------------------------------
     X_train, y_train, X_val, y_val = load_data()
     print(f"\n  Training samples: {len(X_train):,}")
     print(f"  Validation samples: {len(X_val):,}")
     print(f"  Features: {len(ALL_FEATURES)}")
     print(f"  Recovery rate (train): {y_train.mean():.1%}")
 
-    # ── Build and train ────────────────────────────────────────────────────
+    # -- Build and train ----------------------------------------------------
     print("\n  Training HistGradientBoostingClassifier...")
     pipeline = build_pipeline()
     pipeline.fit(X_train, y_train)
     print("  Training complete.")
 
-    # ── Evaluate ───────────────────────────────────────────────────────────
+    # -- Evaluate -----------------------------------------------------------
     train_metrics = evaluate(pipeline, X_train, y_train, 'TRAIN')
     val_metrics   = evaluate(pipeline, X_val,   y_val,   'VALIDATION')
 
-    # ── Feature importance (via permutation on categorical names) ──────────
+    # -- Feature importance (via permutation on categorical names) ----------
     # HistGradientBoosting exposes feature_importances_ after fitting
     try:
         clf = pipeline.named_steps['classifier']
@@ -200,11 +200,11 @@ def main():
         print(f"  [WARN] Could not extract feature importances: {e}")
         importance_dict = {}
 
-    # ── Save model ─────────────────────────────────────────────────────────
+    # -- Save model ---------------------------------------------------------
     joblib.dump(pipeline, MODEL_PATH)
     print(f"\n  Model saved to: {MODEL_PATH}")
 
-    # ── Save model info (for backend and evaluation) ───────────────────────
+    # -- Save model info (for backend and evaluation) -----------------------
     model_info = {
         'trained_at': datetime.now().isoformat(),
         'features': ALL_FEATURES,

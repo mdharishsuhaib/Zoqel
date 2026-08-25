@@ -34,7 +34,7 @@ from sklearn.metrics import (
     roc_curve, precision_recall_curve, average_precision_score,
 )
 
-# ─── Paths ────────────────────────────────────────────────────────────────────
+# --- Paths --------------------------------------------------------------------
 SCRIPT_DIR    = os.path.dirname(os.path.abspath(__file__))
 DATASETS_DIR  = os.path.join(SCRIPT_DIR, '..', 'datasets')
 EVAL_DIR      = os.path.join(SCRIPT_DIR, '..', 'evaluation')
@@ -45,7 +45,7 @@ REPORT_PATH   = os.path.join(EVAL_DIR, 'report.txt')
 
 os.makedirs(EVAL_DIR, exist_ok=True)
 
-# ─── Feature definitions (must match train_model.py) ─────────────────────────
+# --- Feature definitions (must match train_model.py) -------------------------
 CATEGORICAL_FEATURES = ['failure_reason', 'payment_method', 'amount_tier', 'customer_risk_tier']
 NUMERIC_FEATURES     = ['amount_paise', 'prev_successful_payments', 'prev_failures',
                         'days_since_last_success', 'customer_age_days', 'hour_of_day', 'day_of_week']
@@ -62,7 +62,7 @@ def load_test_data():
 
 
 def compute_business_metrics(df: pd.DataFrame, y_pred: np.ndarray) -> dict:
-    """Compute ₹ business metrics from the test set."""
+    """Compute INR  business metrics from the test set."""
     df = df.copy()
     df['predicted_recovered'] = y_pred
     df['actual_recovered'] = df[TARGET]
@@ -137,7 +137,7 @@ def main():
     print(f"  Evaluated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 60)
 
-    # ── Load model ─────────────────────────────────────────────────────────
+    # -- Load model ---------------------------------------------------------
     if not os.path.exists(MODEL_PATH):
         print("[ERROR] Model not found. Run train_model.py first.")
         sys.exit(1)
@@ -148,18 +148,18 @@ def main():
     with open(INFO_PATH) as f:
         model_info = json.load(f)
 
-    # ── Load test data ──────────────────────────────────────────────────────
+    # -- Load test data ------------------------------------------------------
     test_df = load_test_data()
     X_test  = test_df[ALL_FEATURES]
     y_test  = test_df[TARGET]
     print(f"  Test samples: {len(test_df):,}")
     print(f"  Recovery rate (ground truth): {y_test.mean():.1%}")
 
-    # ── Predict ─────────────────────────────────────────────────────────────
+    # -- Predict -------------------------------------------------------------
     y_pred = pipeline.predict(X_test)
     y_prob = pipeline.predict_proba(X_test)[:, 1]
 
-    # ── ML Metrics ──────────────────────────────────────────────────────────
+    # -- ML Metrics ----------------------------------------------------------
     ml_metrics = {
         'accuracy':            round(float(accuracy_score(y_test, y_pred)),                         4),
         'precision':           round(float(precision_score(y_test, y_pred, zero_division=0)),        4),
@@ -171,14 +171,14 @@ def main():
         'false_negative_rate': round(float(((y_test == 1) & (y_pred == 0)).sum() / max(1, (y_test == 1).sum())), 4),
     }
 
-    # ── Business Metrics ────────────────────────────────────────────────────
+    # -- Business Metrics ----------------------------------------------------
     business_metrics = compute_business_metrics(test_df, y_pred)
 
-    # ── Confusion Matrix ─────────────────────────────────────────────────────
+    # -- Confusion Matrix -----------------------------------------------------
     cm = confusion_matrix(y_test, y_pred)
     tn, fp, fn, tp = cm.ravel()
 
-    # ── Per-failure-reason breakdown ────────────────────────────────────────
+    # -- Per-failure-reason breakdown ----------------------------------------
     reason_breakdown = {}
     for reason in test_df['failure_reason'].unique():
         mask = test_df['failure_reason'] == reason
@@ -192,18 +192,18 @@ def main():
             'recall':         round(float(recall_score(y_test[mask], y_pred[mask], zero_division=0)),    4),
         }
 
-    # ── Print summary ────────────────────────────────────────────────────────
-    print(f"\n{'─'*60}")
+    # -- Print summary --------------------------------------------------------
+    print(f"\n{'-'*60}")
     print("  ML METRICS (Held-Out Test Set)")
-    print(f"{'─'*60}")
+    print(f"{'-'*60}")
     for k, v in ml_metrics.items():
         print(f"  {k:<35} {v:.4f}")
 
-    print(f"\n{'─'*60}")
-    print("  BUSINESS METRICS (₹)")
-    print(f"{'─'*60}")
+    print(f"\n{'-'*60}")
+    print("  BUSINESS METRICS (INR )")
+    print(f"{'-'*60}")
     bm = business_metrics
-    INR = lambda p: f"₹{p/100:,.0f}"
+    INR = lambda p: f"INR {p/100:,.0f}"
     print(f"  Revenue at Risk:                  {INR(bm['revenue_at_risk_paise'])}")
     print(f"  Truly Recoverable:                {INR(bm['truly_recoverable_paise'])}")
     print(f"  Revenue Recovered (TP):           {INR(bm['revenue_recovered_paise'])}")
@@ -218,12 +218,12 @@ def main():
     print(f"\n  Classification Report:")
     print(classification_report(y_test, y_pred, target_names=['Not Recovered', 'Recovered']))
 
-    # ── Generate plots ───────────────────────────────────────────────────────
+    # -- Generate plots -------------------------------------------------------
     plot_confusion_matrix(cm, os.path.join(EVAL_DIR, 'confusion_matrix.png'))
     plot_roc_curve(y_test, y_prob, ml_metrics['auc_roc'],
                    os.path.join(EVAL_DIR, 'roc_curve.png'))
 
-    # ── Save results.json ────────────────────────────────────────────────────
+    # -- Save results.json ----------------------------------------------------
     results = {
         'evaluated_at': datetime.now().isoformat(),
         'test_samples': len(test_df),
@@ -240,7 +240,7 @@ def main():
         json.dump(results, f, indent=2)
     print(f"\n  Results saved to: {RESULTS_PATH}")
 
-    # ── Write human-readable report ──────────────────────────────────────────
+    # -- Write human-readable report ------------------------------------------
     report_lines = [
         "=" * 60,
         "  ZOQEL — EVALUATION REPORT (HELD-OUT TEST SET)",
@@ -282,7 +282,7 @@ def main():
     print(f"  Evaluation complete.")
     print(f"  Test F1:   {ml_metrics['f1']:.4f}")
     print(f"  Test AUC:  {ml_metrics['auc_roc']:.4f}")
-    print(f"  ₹ Recovered: {INR(bm['revenue_recovered_paise'])}")
+    print(f"  INR  Recovered: {INR(bm['revenue_recovered_paise'])}")
     print(f"{'='*60}\n")
 
 
