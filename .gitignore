@@ -1,0 +1,79 @@
+# ─── Java / Maven ───────────────────────────────────────────────────────────
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+.mvn/wrapper/maven-wrapper.jar
+
+# ─── Spring Boot ─────────────────────────────────────────────────────────────
+HELP.md
+.spring-boot-devtools.properties
+
+# ─── Node / Frontend ─────────────────────────────────────────────────────────
+node_modules/
+dist/
+.vite/
+*.local
+
+# ─── Python / ML ─────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+.eggs/
+*.egg
+.pytest_cache/
+.mypy_cache/
+ml/model.pkl
+ml/model_info.json
+
+# ─── Datasets (large files — tracked via git-lfs or excluded) ────────────────
+datasets/*.csv
+datasets/*.parquet
+evaluation/*.json
+!datasets/.gitkeep
+!evaluation/.gitkeep
+
+# ─── Environment & Secrets ───────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.env
+
+# ─── IDE ─────────────────────────────────────────────────────────────────────
+.idea/
+*.iml
+*.iws
+.classpath
+.project
+.settings/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ─── OS ──────────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ─── Docker ──────────────────────────────────────────────────────────────────
+.docker/
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+*.log
+logs/

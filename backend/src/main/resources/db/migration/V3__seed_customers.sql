@@ -1,0 +1,22 @@
+INSERT INTO customers (id, name, email, phone, risk_tier, joined_at) VALUES
+  ('11111111-1111-1111-1111-111111111111', 'Rahul Sharma', 'rahul.s@example.com', '9876543210', 'LOW', '2020-01-15 10:00:00'),
+  ('22222222-2222-2222-2222-222222222222', 'Priya Patel', 'priya.p@example.com', '9876543211', 'MEDIUM', '2021-03-22 14:30:00'),
+  ('33333333-3333-3333-3333-333333333333', 'Amit Kumar', 'amit.k@example.com', '9876543212', 'HIGH', '2022-07-10 09:15:00'),
+  ('44444444-4444-4444-4444-444444444444', 'Sneha Gupta', 'sneha.g@example.com', '9876543213', 'LOW', '2023-11-05 16:45:00'),
+  ('55555555-5555-5555-5555-555555555555', 'Vikram Singh', 'vikram.s@example.com', '9876543214', 'MEDIUM', '2020-08-19 11:20:00'),
+  ('66666666-6666-6666-6666-666666666666', 'Neha Reddy', 'neha.r@example.com', '9876543215', 'LOW', '2021-12-01 13:10:00'),
+  ('77777777-7777-7777-7777-777777777777', 'Rohan Desai', 'rohan.d@example.com', '9876543216', 'HIGH', '2022-05-28 15:55:00'),
+  ('88888888-8888-8888-8888-888888888888', 'Pooja Joshi', 'pooja.j@example.com', '9876543217', 'MEDIUM', '2023-02-14 10:40:00'),
+  ('99999999-9999-9999-9999-999999999999', 'Suresh Nair', 'suresh.n@example.com', '9876543218', 'LOW', '2020-10-09 08:25:00'),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Anjali Iyer', 'anjali.i@example.com', '9876543219', 'MEDIUM', '2021-06-17 12:50:00'),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Karthik Menon', 'karthik.m@example.com', '9876543220', 'HIGH', '2022-09-23 17:35:00'),
+  ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'Divya Verma', 'divya.v@example.com', '9876543221', 'LOW', '2023-08-11 14:05:00'),
+  ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'Manoj Tiwari', 'manoj.t@example.com', '9876543222', 'MEDIUM', '2020-04-30 09:50:00'),
+  ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'Swati Das', 'swati.d@example.com', '9876543223', 'LOW', '2021-01-25 16:15:00'),
+  ('ffffffff-ffff-ffff-ffff-ffffffffffff', 'Rajeev Bhatia', 'rajeev.b@example.com', '9876543224', 'HIGH', '2022-11-12 11:00:00'),
+  ('12345678-1234-1234-1234-123456789012', 'Kiran Shah', 'kiran.s@example.com', '9876543225', 'MEDIUM', '2023-04-05 13:40:00'),
+  ('87654321-4321-4321-4321-210987654321', 'Gaurav Yadav', 'gaurav.y@example.com', '9876543226', 'LOW', '2020-12-20 10:20:00'),
+  ('11223344-5566-7788-9900-aabbccddeeff', 'Aarti Kulkarni', 'aarti.k@example.com', '9876543227', 'MEDIUM', '2021-09-08 15:10:00'),
+  ('ffeeddcc-bbaa-0099-8877-665544332211', 'Varun Kapoor', 'varun.k@example.com', '9876543228', 'HIGH', '2022-03-15 08:45:00'),
+  ('abcdef01-2345-6789-abcd-ef0123456789', 'Meera Rajput', 'meera.r@example.com', '9876543229', 'LOW', '2023-12-30 14:55:00')
+ON CONFLICT (id) DO NOTHING;
