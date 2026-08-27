@@ -5,5 +5,4 @@ INSERT INTO policy_rules (rule_key, rule_value, description) VALUES
   ('block_insufficient_funds_retry', 'true', 'Block automatic retry for insufficient_funds failure reason'),
   ('block_duplicate_attempt_retry', 'true', 'Block automatic retry for duplicate_attempt failure reason'),
   ('require_human_for_repeated_failure', 'true', 'Escalate to human if customer has 3+ previous failures'),
-  ('max_interventions_per_case', '2', 'Maximum total interventions (retries + notifications) per recovery case')
-ON CONFLICT (rule_key) DO NOTHING;
+  ('max_interventions_per_case', '2', 'Maximum total interventions (retries + notifications) per recovery case');

@@ -18,5 +18,4 @@ INSERT INTO customers (id, name, email, phone, risk_tier, joined_at) VALUES
   ('87654321-4321-4321-4321-210987654321', 'Gaurav Yadav', 'gaurav.y@example.com', '9876543226', 'LOW', '2020-12-20 10:20:00'),
   ('11223344-5566-7788-9900-aabbccddeeff', 'Aarti Kulkarni', 'aarti.k@example.com', '9876543227', 'MEDIUM', '2021-09-08 15:10:00'),
   ('ffeeddcc-bbaa-0099-8877-665544332211', 'Varun Kapoor', 'varun.k@example.com', '9876543228', 'HIGH', '2022-03-15 08:45:00'),
-  ('abcdef01-2345-6789-abcd-ef0123456789', 'Meera Rajput', 'meera.r@example.com', '9876543229', 'LOW', '2023-12-30 14:55:00')
-ON CONFLICT (id) DO NOTHING;
+  ('abcdef01-2345-6789-abcd-ef0123456789', 'Meera Rajput', 'meera.r@example.com', '9876543229', 'LOW', '2023-12-30 14:55:00');

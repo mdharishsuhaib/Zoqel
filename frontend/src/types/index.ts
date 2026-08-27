@@ -1,40 +1,19 @@
+export type FailureReason = 'BANK_TIMEOUT' | 'NETWORK_ERROR' | 'INSUFFICIENT_FUNDS' | 'EXPIRED_CARD' | 'DUPLICATE_ATTEMPT' | 'REPEATED_FAILURE' | 'UNKNOWN';
+export type TransactionStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'RECOVERED' | 'IGNORED' | 'ESCALATED';
+export type PaymentMethod = 'UPI' | 'CARD' | 'NETBANKING' | 'WALLET';
+export type RecoveryAction = 'RETRY' | 'NOTIFY' | 'ESCALATE' | 'IGNORE';
+export type RiskTier = 'LOW' | 'MEDIUM' | 'HIGH';
+export type RecoveryCaseStatus = 'OPEN' | 'IN_PROGRESS' | 'RECOVERED' | 'FAILED' | 'ESCALATED' | 'IGNORED';
+
 export interface Customer {
   id: string;
   name: string;
   email: string;
   phone?: string;
-  riskTier: 'LOW' | 'MEDIUM' | 'HIGH';
+  riskTier: RiskTier;
   joinedAt: string;
-  createdAt: string;
+  lifetimeValuePaise: number;
 }
-
-export interface CustomerHistory {
-  customerId: string;
-  totalTransactions: number;
-  successfulPayments: number;
-  failedPayments: number;
-  successRate: number;
-  totalAmountPaise: number;
-  lastPaymentAt?: string;
-  lastFailureAt?: string;
-}
-
-export type FailureReason =
-  | 'BANK_TIMEOUT'
-  | 'NETWORK_ERROR'
-  | 'INSUFFICIENT_FUNDS'
-  | 'EXPIRED_CARD'
-  | 'DUPLICATE_ATTEMPT'
-  | 'REPEATED_FAILURE'
-  | 'UNKNOWN';
-
-export type TransactionStatus =
-  | 'PENDING'
-  | 'SUCCESS'
-  | 'FAILED'
-  | 'RECOVERED'
-  | 'IGNORED'
-  | 'ESCALATED';
 
 export interface Transaction {
   id: string;
@@ -42,7 +21,7 @@ export interface Transaction {
   amountPaise: number;
   status: TransactionStatus;
   failureReason?: FailureReason;
-  paymentMethod: string;
+  paymentMethod: PaymentMethod;
   simulatorSeed: number;
   initiatedAt: string;
   settledAt?: string;
@@ -53,13 +32,13 @@ export interface RiskScore {
   transactionId: string;
   score: number;
   atRisk: boolean;
-  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH';
   primaryReason: string;
   estimatedRecoveryProbability: number;
 }
 
 export interface AgentDecision {
-  decision: 'RETRY' | 'NOTIFY' | 'ESCALATE' | 'IGNORE';
+  decision: RecoveryAction;
   reason: string;
   confidence: number;
   requiresHuman: boolean;
@@ -68,12 +47,12 @@ export interface AgentDecision {
 export interface RecoveryCase {
   id: string;
   transactionId: string;
-  status: 'OPEN' | 'IN_PROGRESS' | 'RECOVERED' | 'FAILED' | 'ESCALATED' | 'IGNORED';
+  status: RecoveryCaseStatus;
   retryCount: number;
-  agentDecision?: string;
+  agentDecision?: RecoveryAction;
   agentReason?: string;
   agentConfidence?: number;
-  policyDecision?: string;
+  policyDecision?: 'ALLOWED' | 'BLOCKED';
   policyReason?: string;
   recoveryProbability?: number;
   lastAction?: string;
@@ -88,7 +67,7 @@ export interface AuditEvent {
   recoveryCaseId?: string;
   eventType: string;
   eventDetail?: string;
-  metadata?: string;
+  actor: string;
   occurredAt: string;
 }
 
@@ -105,6 +84,21 @@ export interface DashboardMetrics {
   humanEscalations: number;
   blockedActions: number;
   ignoredCases: number;
+}
+
+export interface ChartDataPoint {
+  date: string;
+  atRisk: number;
+  recoverable: number;
+  recovered: number;
+}
+
+export interface SimulatorStep {
+  id: string;
+  label: string;
+  detail: string;
+  status: 'pending' | 'active' | 'complete' | 'error';
+  durationMs: number;
 }
 
 export interface PagedResponse<T> {
