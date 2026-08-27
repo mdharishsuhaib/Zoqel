@@ -34,8 +34,8 @@ services:
       DB_HOST: db
       DB_USER: ${DB_USER:-zoqel}
       DB_PASSWORD: ${DB_PASSWORD:-zoqel_secret}
-      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
-      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openai/gpt-4o}
+      OLLAMA_API_KEY: ${OLLAMA_API_KEY:-}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gpt-oss:120b-cloud}
       SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8080:8080"

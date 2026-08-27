@@ -3,7 +3,7 @@ package com.zoqel.agent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zoqel.config.OpenRouterConfig;
+import com.zoqel.config.OllamaConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,10 +15,10 @@ import java.util.Map;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class OpenRouterAgentGateway implements AgentGateway {
+public class OllamaAgentGateway implements AgentGateway {
 
-    private final OpenRouterConfig config;
-    private final RestClient openRouterClient;
+    private final OllamaConfig config;
+    private final RestClient ollamaClient;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -34,11 +34,12 @@ public class OpenRouterAgentGateway implements AgentGateway {
                     "messages", List.of(
                             Map.of("role", "system", "content", systemPrompt),
                             Map.of("role", "user", "content", userPrompt)
-                    )
+                    ),
+                    "response_format", Map.of("type", "json_object")
             );
 
-            Map response = openRouterClient.post()
-                    .uri("/chat/completions")
+            Map response = ollamaClient.post()
+                    .uri("/v1/chat/completions")
                     .body(requestBody)
                     .retrieve()
                     .body(Map.class);
@@ -61,6 +62,7 @@ public class OpenRouterAgentGateway implements AgentGateway {
                     String reason = jsonNode.has("reason") ? jsonNode.get("reason").asText() : "Fallback reason";
                     double confidence = jsonNode.has("confidence") ? jsonNode.get("confidence").asDouble() : 0.6;
                     boolean requiresHuman = false;
+                    
                     if (jsonNode.has("requiresHuman")) {
                         requiresHuman = jsonNode.get("requiresHuman").asBoolean();
                     } else if (jsonNode.has("requires_human")) {

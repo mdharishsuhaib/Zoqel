@@ -21,7 +21,7 @@ This project is designed for a modern, scalable cloud deployment:
 *   **Frontend:** React (Vite), TypeScript, Tailwind CSS, Framer Motion, Zustand (State Management). Deployed via **Cloudflare Pages**.
 *   **Backend:** Java 21, Spring Boot 3.3.2, Spring Data JPA, Flyway (Migrations). Deployed via **Render**.
 *   **Database:** PostgreSQL 15. Hosted on **Supabase**.
-*   **AI Layer:** OpenRouter API (GPT-4o) for intelligent transaction diagnosis.
+*   **AI Layer:** Ollama Cloud API (gpt-oss:120b-cloud) for intelligent transaction diagnosis.
 
 ## 🛠️ Local Development Setup
 

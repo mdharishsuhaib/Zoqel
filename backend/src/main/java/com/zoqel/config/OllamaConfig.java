@@ -10,10 +10,10 @@ import org.springframework.web.client.RestClient;
 
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix = "zoqel.openrouter")
+@ConfigurationProperties(prefix = "zoqel.ollama")
 @Getter
 @Setter
-public class OpenRouterConfig {
+public class OllamaConfig {
 
     private String apiKey;
     private String baseUrl;
@@ -22,7 +22,7 @@ public class OpenRouterConfig {
     private String siteName;
 
     @Bean
-    public RestClient openRouterClient() {
+    public RestClient ollamaClient() {
         return RestClient.builder()
                 .baseUrl(baseUrl)
                 .defaultHeader("Authorization", "Bearer " + apiKey)
