@@ -35,7 +35,7 @@ management:
 zoqel:
   ollama:
     api-key: ${OLLAMA_API_KEY:}
-    base-url: ${OLLAMA_BASE_URL:https://api.ollama.cloud/v1}
+    base-url: ${OLLAMA_BASE_URL:https://ollama.com/v1}
     model: ${OLLAMA_MODEL:gpt-oss:120b-cloud}
     site-url: https://zoqel.ai
     site-name: Zoqel
