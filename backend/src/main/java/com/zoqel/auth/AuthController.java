@@ -2,14 +2,12 @@ package com.zoqel.auth;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,11 +25,13 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
         }
 
+        String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt(12));
+
         AppUser user = AppUser.builder()
                 .id(UUID.randomUUID().toString())
                 .fullName(request.getFullName())
                 .email(request.getEmail())
-                .passwordHash(hashPassword(request.getPassword()))
+                .passwordHash(hashedPassword)
                 .createdAt(LocalDateTime.now())
                 .build();
         
@@ -49,21 +49,11 @@ public class AuthController {
         }
 
         AppUser user = userOpt.get();
-        if (!user.getPasswordHash().equals(hashPassword(request.getPassword()))) {
+        if (!BCrypt.checkpw(request.getPassword(), user.getPasswordHash())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
 
         return ResponseEntity.ok(new AuthResponse(user.getId(), user.getFullName(), user.getEmail(), "mock-jwt-token-" + user.getId()));
-    }
-
-    private String hashPassword(String password) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(hash);
-        } catch (Exception e) {
-            throw new RuntimeException("Error hashing password", e);
-        }
     }
 
     @Data
