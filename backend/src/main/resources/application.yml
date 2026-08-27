@@ -35,8 +35,8 @@ management:
 zoqel:
   openrouter:
     api-key: ${OPENROUTER_API_KEY:}
-    base-url: ${LLM_BASE_URL:https://ws-jt98l2xmgqt6pb7l.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1}
-    model: ${OPENROUTER_MODEL:openai/gpt-4o}
+    base-url: ${LLM_BASE_URL:https://api.ollama.cloud/v1}
+    model: ${OPENROUTER_MODEL:gpt-oss:120b-cloud}
     site-url: https://zoqel.ai
     site-name: Zoqel
   policy:
