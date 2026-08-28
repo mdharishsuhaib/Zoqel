@@ -11,7 +11,20 @@ import { cn } from '../../lib/utils';
 // LIVE DEMO FLAG - Set to true to lock down non-demo paths
 const IS_LIVE_DEMO = true;
 
-const NAV_GROUPS = [
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ElementType;
+  exact?: boolean;
+  isLocked?: boolean;
+}
+
+interface NavGroup {
+  label: string | null;
+  items: NavItem[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
   {
     label: null,
     items: [
