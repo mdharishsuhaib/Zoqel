@@ -87,18 +87,6 @@ export function LandingPage() {
                   Get Started
                 </button>
               </div>
-              <div className="text-sm text-[#667085] flex items-center gap-2">
-                No account required &middot; Synthetic payment data &middot; Live AI recovery simulation
-              </div>
-            </motion.div>
-
-            <motion.div 
-              variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ delay: 1.2 }}
-              className="flex flex-col sm:flex-row justify-center gap-4 mb-8"
-            >
-              <button onClick={() => navigate('/app')} className="px-10 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-[#2B84EA] hover:bg-[#1A6DD0] transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3">
-                See Live Demo <Activity size={20} className="text-[#93C5FD]" />
-              </button>
             </motion.div>
           </motion.div>
         </div>
