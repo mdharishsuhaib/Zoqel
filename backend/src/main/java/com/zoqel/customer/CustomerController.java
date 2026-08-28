@@ -2,10 +2,14 @@ package com.zoqel.customer;
 
 import com.zoqel.exception.NotFoundException;
 import com.zoqel.workspace.CurrentUserService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -16,6 +20,20 @@ public class CustomerController {
 
     private final CustomerRepository customerRepository;
     private final CustomerHistoryService customerHistoryService;
+
+    @PostMapping
+    public Customer createCustomer(@RequestBody CreateCustomerRequest req) {
+        Customer c = Customer.builder()
+            .id(UUID.randomUUID().toString())
+            .fullName(req.getFullName())
+            .email(req.getEmail())
+            .phone(req.getPhone())
+            .riskProfile("LOW")
+            .workspaceId(currentUserService.getCurrentWorkspaceId())
+            .createdAt(LocalDateTime.now())
+            .build();
+        return customerRepository.save(c);
+    }
 
     @GetMapping
     public Page<Customer> getAllCustomers(Pageable pageable) {
@@ -35,5 +53,11 @@ public class CustomerController {
         }
         return customerHistoryService.getHistory(id, currentUserService.getCurrentWorkspaceId());
     }
-}
 
+    @Data
+    static class CreateCustomerRequest {
+        private String fullName;
+        private String email;
+        private String phone;
+    }
+}
