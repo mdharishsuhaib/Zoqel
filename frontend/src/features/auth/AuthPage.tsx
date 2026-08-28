@@ -36,11 +36,11 @@ export function AuthPage({ mode }: AuthPageProps) {
     try {
       if (isLogin) {
         const response = await apiClient.post('/auth/login', { email, password });
-        login(response.data, response.data.token || "mock_jwt_for_hackathon");
+        login(response.data, response.data.token);
         navigate('/app');
       } else {
         const response = await apiClient.post('/auth/register', { fullName, email, password });
-        login(response.data, response.data.token || "mock_jwt_for_hackathon");
+        login(response.data, response.data.token);
         navigate('/app');
       }
     } catch (err: any) {
@@ -256,5 +256,6 @@ export function AuthPage({ mode }: AuthPageProps) {
     </div>
   );
 }
+
 
 
