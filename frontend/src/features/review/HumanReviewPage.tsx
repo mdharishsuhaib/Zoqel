@@ -14,7 +14,7 @@ export function HumanReviewPage() {
   const { data: pagedTxns } = useQuery({
     queryKey: ['escalated_txns'],
     queryFn: () => getTransactions(0, 50, 'ESCALATED'),
-    refetchInterval: 5000
+    refetchInterval: 30000
   });
 
   // Filter out the ones we've already "resolved" in this session

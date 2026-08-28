@@ -16,7 +16,7 @@ export function PaymentsPage() {
   const { data: page, isLoading } = useQuery({
     queryKey: ['payments_transactions', statusFilter],
     queryFn: () => getTransactions(0, 100, statusFilter === 'All Status' ? undefined : statusFilter),
-    refetchInterval: 5000 // poll for new simulated transactions
+    refetchInterval: 30000 // poll for new simulated transactions less aggressively
   });
 
   // Client-side text filtering on the fetched page

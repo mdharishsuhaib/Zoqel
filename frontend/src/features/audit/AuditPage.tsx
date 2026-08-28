@@ -37,7 +37,7 @@ export function AuditPage() {
   const { data: rawEvents = MOCK_AUDIT_EVENTS, isLoading } = useQuery({
     queryKey: ['audit_log'],
     queryFn: getLiveAuditLog,
-    refetchInterval: 5000
+    refetchInterval: 15000
   });
 
   const uniqueActors = useMemo(() => Array.from(new Set(rawEvents.map(e => e.actor))).sort(), [rawEvents]);

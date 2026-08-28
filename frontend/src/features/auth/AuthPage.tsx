@@ -91,12 +91,9 @@ export function AuthPage({ mode }: AuthPageProps) {
             <form onSubmit={handleSubmit} className="space-y-5">
               {!isLogin && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
-                  <label className="block text-sm font-medium text-[#344054]">Business Name</label>
+                  <label htmlFor="fullName" className="block text-sm font-medium text-[#344054]">Business Name</label>
                   <div className="mt-1">
-                    <input
-                      type="text"
-                      required
-                      value={fullName}
+                    <input id="fullName" name="fullName" autoComplete="organization" type="text" required value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       className="appearance-none block w-full px-3 py-2.5 border border-[#D0D5DD] rounded-lg shadow-sm placeholder-[#98A2B3] focus:outline-none focus:ring-[#2B84EA] focus:border-[#2B84EA] sm:text-sm transition-colors"
                       placeholder="e.g. Acme Corp"
@@ -106,12 +103,9 @@ export function AuthPage({ mode }: AuthPageProps) {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-[#344054]">Email address</label>
+                <label htmlFor="email" className="block text-sm font-medium text-[#344054]">Email address</label>
                 <div className="mt-1">
-                  <input
-                    type="email"
-                    required
-                    value={email}
+                  <input id="email" name="email" autoComplete="email" type="email" required value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="appearance-none block w-full px-3 py-2.5 border border-[#D0D5DD] rounded-lg shadow-sm placeholder-[#98A2B3] focus:outline-none focus:ring-[#2B84EA] focus:border-[#2B84EA] sm:text-sm transition-colors"
                     placeholder="you@company.com"
@@ -120,12 +114,9 @@ export function AuthPage({ mode }: AuthPageProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#344054]">Password</label>
+                <label htmlFor="password" className="block text-sm font-medium text-[#344054]">Password</label>
                 <div className="mt-1">
-                  <input
-                    type="password"
-                    required
-                    value={password}
+                  <input id="password" name="password" autoComplete={isLogin ? "current-password" : "new-password"} type="password" required value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="appearance-none block w-full px-3 py-2.5 border border-[#D0D5DD] rounded-lg shadow-sm placeholder-[#98A2B3] focus:outline-none focus:ring-[#2B84EA] focus:border-[#2B84EA] sm:text-sm transition-colors"
                     placeholder="••••••••"
@@ -135,12 +126,9 @@ export function AuthPage({ mode }: AuthPageProps) {
               
               {!isLogin && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
-                  <label className="block text-sm font-medium text-[#344054]">Confirm Password</label>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#344054]">Confirm Password</label>
                   <div className="mt-1">
-                    <input
-                      type="password"
-                      required
-                      value={confirmPassword}
+                    <input id="confirmPassword" name="confirmPassword" autoComplete="new-password" type="password" required value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="appearance-none block w-full px-3 py-2.5 border border-[#D0D5DD] rounded-lg shadow-sm placeholder-[#98A2B3] focus:outline-none focus:ring-[#2B84EA] focus:border-[#2B84EA] sm:text-sm transition-colors"
                       placeholder="••••••••"
@@ -245,3 +233,4 @@ export function AuthPage({ mode }: AuthPageProps) {
     </div>
   );
 }
+

@@ -19,7 +19,7 @@ export function Topbar() {
   const { data: events } = useQuery({
     queryKey: ['recentAuditEvents'],
     queryFn: getRecentAuditEvents,
-    refetchInterval: 5000
+    refetchInterval: 15000
   });
 
   useEffect(() => {
