@@ -53,17 +53,17 @@ export function AuthPage({ mode }: AuthPageProps) {
   return (
     <div className="min-h-screen bg-[#F9FAFB] flex">
       {/* Left side - Form */}
-      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 relative bg-white">
+      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 bg-white">
         
-        <Link to="/" className="absolute top-8 left-8 text-[#667085] hover:text-[#101828] font-medium flex items-center gap-2 transition-colors text-sm">
-          <ArrowLeft size={16} /> Back
-        </Link>
-
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-sm mx-auto lg:w-96"
         >
+          <Link to="/" className="text-[#667085] hover:text-[#101828] font-medium flex items-center gap-2 transition-colors text-sm mb-12 w-fit">
+            <ArrowLeft size={16} /> Back
+          </Link>
+
           <div className="mb-8">
             <Logo variant="light" />
             <h2 className="mt-8 text-3xl font-extrabold text-[#101828]">
