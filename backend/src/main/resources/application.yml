@@ -24,7 +24,16 @@ spring:
     baseline-version: "0"
 
 server:
-  port: ${PORT:8080}
+  port: ${PORT:10000}
+  address: 0.0.0.0
+
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    org.hibernate: DEBUG
+    org.flywaydb: DEBUG
+    com.zaxxer.hikari: DEBUG
+    org.postgresql: TRACE
 
 jwt:
   secret: ${JWT_SECRET:default_local_secret_key_change_in_production}
