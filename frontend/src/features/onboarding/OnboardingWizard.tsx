@@ -55,6 +55,7 @@ export function OnboardingWizard() {
       try {
         // Save policies (maxAmount is in Rupees, backend needs paise)
         await Promise.all([
+          apiClient.put('/policy/auto_recovery_enabled', { value: autoRecovery.toString() }),
           apiClient.put('/policy/max_retries_per_transaction', { value: maxRetries.toString() }),
           apiClient.put('/policy/min_recovery_confidence', { value: (minConfidence / 100).toString() }),
           apiClient.put('/policy/max_auto_amount_paise', { value: (maxAmount * 100).toString() }),
@@ -145,23 +146,30 @@ export function OnboardingWizard() {
             {step === 2 && (
               <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <h3 className="text-xl font-bold text-[#101828] mb-2">Connect Payment Source</h3>
-                <p className="text-[#475467] text-sm mb-6">Link your payment gateway to allow Zoqel to monitor and recover failed transactions.</p>
-                
+                <p className="text-[#475467] text-sm mb-2">Link your Razorpay sandbox to allow Zoqel to monitor and recover failed transactions.</p>
+                <div className="mb-6">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                    Sandbox Simulator — no real credentials required
+                  </span>
+                </div>
+
                 <div className={`p-6 border-2 rounded-xl transition-all ${razorpayConnected ? 'border-[#34D399] bg-[#ECFDF5]' : 'border-[#D0D5DD] hover:border-[#2B84EA]'}`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-white rounded-lg shadow-sm border border-[#EAECF0] flex items-center justify-center p-2">
-                        {/* Fake Razorpay Logo */}
                         <div className="w-full h-full bg-[#02042B] rounded text-white flex items-center justify-center font-bold text-xs">RZP</div>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-[#101828]">Razorpay Sandbox</h4>
-                        <p className="text-xs text-[#475467]">Test environment connection</p>
+                        <h4 className="font-semibold text-[#101828]">Razorpay Sandbox Simulator</h4>
+                        <p className="text-xs text-[#475467]">Simulated payment gateway for recovery testing</p>
                       </div>
                     </div>
                     {razorpayConnected ? (
-                      <div className="flex items-center gap-2 text-[#059669] font-medium text-sm">
-                        <CheckCircle2 size={18} /> Connected
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="flex items-center gap-2 text-[#059669] font-medium text-sm">
+                          <CheckCircle2 size={18} /> Connected
+                        </div>
+                        <span className="text-xs text-[#475467]">Sandbox mode active</span>
                       </div>
                     ) : (
                       <button onClick={() => setRazorpayConnected(true)} className="px-4 py-2 bg-[#02042B] text-white text-sm font-medium rounded-lg hover:bg-[#11133C] transition-colors">
