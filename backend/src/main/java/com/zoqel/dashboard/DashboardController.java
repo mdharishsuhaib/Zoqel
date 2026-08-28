@@ -32,7 +32,7 @@ public class DashboardController {
 
         long revenueAtRisk = transactionRepository.sumAmountByStatusInAndWorkspaceId(List.of(
                 TransactionStatus.FAILED, TransactionStatus.ESCALATED, TransactionStatus.IGNORED, TransactionStatus.RECOVERED
-        ));
+        ), currentUserService.getCurrentWorkspaceId());
         
         long revenueRecovered = transactionRepository.sumAmountByStatusAndWorkspaceId(TransactionStatus.RECOVERED, currentUserService.getCurrentWorkspaceId());
         long failedOnlyAmount = transactionRepository.sumAmountByStatusAndWorkspaceId(TransactionStatus.FAILED, currentUserService.getCurrentWorkspaceId());
@@ -67,4 +67,5 @@ public class DashboardController {
                 .build();
     }
 }
+
 

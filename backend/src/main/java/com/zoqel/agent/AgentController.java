@@ -29,10 +29,11 @@ public class AgentController {
                 .orElseThrow(() -> new NotFoundException("Transaction not found"));
 
         CustomerHistory history = customerHistoryService.getHistory(t.getCustomer().getId(), currentUserService.getCurrentWorkspaceId());
-        RiskScore risk = riskDetectionService.assess(transactionId);
+        RiskScore risk = riskDetectionService.assess(transactionId, currentUserService.getCurrentWorkspaceId());
 
         return agentService.recommend(t, history, risk);
     }
 }
+
 
 

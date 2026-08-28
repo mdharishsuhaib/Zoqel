@@ -19,7 +19,7 @@ public class AuditService {
                 .transactionId(transactionId)
                 .workspaceId(workspaceId)
                 .eventType(type)
-                .description(description)
+                .eventDetail(description)
                 .occurredAt(Instant.now())
                 .build();
         auditRepository.save(event);
@@ -33,3 +33,4 @@ public class AuditService {
         return auditRepository.findAllByWorkspaceIdOrderByOccurredAtDesc(workspaceId, pageable);
     }
 }
+
