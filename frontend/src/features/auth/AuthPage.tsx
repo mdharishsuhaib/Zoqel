@@ -163,25 +163,7 @@ export function AuthPage({ mode }: AuthPageProps) {
               </div>
             </form>
             
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#E4E7EC]" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-[#667085]">OR</span>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <Link
-                  to="/demo"
-                  className="w-full flex justify-center items-center gap-2 py-2.5 px-4 border border-[#E4E7EC] rounded-lg shadow-sm text-sm font-semibold text-[#101828] bg-white hover:bg-[#F9FAFB] transition-colors"
-                >
-                  Explore Live Demo <ArrowRight size={16} className="text-[#667085]" />
-                </Link>
-              </div>
-            </div>
+            
 
             <div className="mt-8 text-center text-sm text-[#475467]">
               {isLogin ? (
@@ -207,24 +189,65 @@ export function AuthPage({ mode }: AuthPageProps) {
       {/* Right side - Image/Gradient */}
       <div className="hidden lg:block relative w-0 flex-1 bg-[#101828] overflow-hidden">
         <div className="absolute inset-0 flex flex-col justify-center px-16 z-10 text-white">
-          <h3 className="text-4xl font-bold mb-6">Stop losing 30% of your revenue to false declines.</h3>
-          <p className="text-lg text-[#9CA3AF] max-w-lg leading-relaxed">
-            Zoqel uses AI to automatically detect, diagnose, and recover failed payments before your customers even notice.
-          </p>
-          <div className="mt-12 space-y-4">
-            <div className="flex items-center gap-4 text-[#D1D5DB]">
-              <div className="w-12 h-12 rounded-full bg-[#1F2937] flex items-center justify-center text-[#2B84EA] font-bold">1</div>
-              <div>Detect revenue at risk instantly</div>
-            </div>
-            <div className="flex items-center gap-4 text-[#D1D5DB]">
-              <div className="w-12 h-12 rounded-full bg-[#1F2937] flex items-center justify-center text-[#2B84EA] font-bold">2</div>
-              <div>AI selects the optimal recovery path</div>
-            </div>
-            <div className="flex items-center gap-4 text-[#D1D5DB]">
-              <div className="w-12 h-12 rounded-full bg-[#1F2937] flex items-center justify-center text-[#2B84EA] font-bold">3</div>
-              <div>Recover money within policy bounds</div>
-            </div>
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={isLogin ? 'login' : 'signup'}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {isLogin ? (
+                <>
+                  <h3 className="text-4xl font-bold mb-6">Welcome back to your autonomous recovery engine.</h3>
+                  <p className="text-lg text-[#9CA3AF] max-w-lg leading-relaxed">
+                    Monitor your live recovery queue, inspect AI decisions, and review your audit trail. Zoqel is working in the background so you don't have to.
+                  </p>
+                  <div className="mt-12 p-6 bg-[#1F2937]/50 border border-[#374151] rounded-xl max-w-lg backdrop-blur-sm">
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="text-[#9CA3AF] text-sm">System Status</span>
+                      <span className="flex items-center gap-2 text-sm text-[#34D399]"><div className="w-2 h-2 rounded-full bg-[#34D399] animate-pulse" /> All Systems Nominal</span>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-[#D1D5DB]">AI Decision Engine</span>
+                        <span className="text-white font-medium">Online</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#D1D5DB]">Policy Bounds</span>
+                        <span className="text-white font-medium">Enforcing</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#D1D5DB]">Recovery Queue</span>
+                        <span className="text-white font-medium">Processing</span>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-4xl font-bold mb-6">Stop losing 30% of your revenue to false declines.</h3>
+                  <p className="text-lg text-[#9CA3AF] max-w-lg leading-relaxed">
+                    Zoqel uses AI to automatically detect, diagnose, and recover failed payments before your customers even notice.
+                  </p>
+                  <div className="mt-12 space-y-4">
+                    <div className="flex items-center gap-4 text-[#D1D5DB]">
+                      <div className="w-12 h-12 rounded-full bg-[#1F2937] flex items-center justify-center text-[#2B84EA] font-bold">1</div>
+                      <div>Detect revenue at risk instantly</div>
+                    </div>
+                    <div className="flex items-center gap-4 text-[#D1D5DB]">
+                      <div className="w-12 h-12 rounded-full bg-[#1F2937] flex items-center justify-center text-[#2B84EA] font-bold">2</div>
+                      <div>AI selects the optimal recovery path</div>
+                    </div>
+                    <div className="flex items-center gap-4 text-[#D1D5DB]">
+                      <div className="w-12 h-12 rounded-full bg-[#1F2937] flex items-center justify-center text-[#2B84EA] font-bold">3</div>
+                      <div>Recover money within policy bounds</div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
         <div className="absolute inset-0 bg-gradient-to-br from-[#101828] via-[#1A2333] to-[#2B84EA]/20 opacity-80 mix-blend-multiply" />
         <div className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] rounded-full bg-[#2B84EA]/20 blur-[120px]" />
@@ -233,4 +256,5 @@ export function AuthPage({ mode }: AuthPageProps) {
     </div>
   );
 }
+
 
