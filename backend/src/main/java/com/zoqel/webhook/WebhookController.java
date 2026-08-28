@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/v1/webhooks")
-@CrossOrigin(origins = "*")
+
 public class WebhookController {
     
     private static final Logger logger = Logger.getLogger(WebhookController.class.getName());
@@ -37,3 +37,4 @@ public class WebhookController {
         return ResponseEntity.ok("Webhook received successfully");
     }
 }
+

@@ -7,6 +7,7 @@ import com.zoqel.risk.RiskDetectionService;
 import com.zoqel.risk.RiskScore;
 import com.zoqel.transaction.Transaction;
 import com.zoqel.transaction.TransactionRepository;
+import com.zoqel.workspace.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AgentController {
 
+    private final CurrentUserService currentUserService;
+
     private final AgentService agentService;
     private final TransactionRepository transactionRepository;
     private final CustomerHistoryService customerHistoryService;
@@ -22,7 +25,7 @@ public class AgentController {
 
     @PostMapping("/recommend/{transactionId}")
     public AgentDecision recommend(@PathVariable String transactionId) {
-        Transaction t = transactionRepository.findById(transactionId)
+        Transaction t = transactionRepository.findByIdAndWorkspaceId(transactionId, currentUserService.getCurrentWorkspaceId())
                 .orElseThrow(() -> new NotFoundException("Transaction not found"));
 
         CustomerHistory history = customerHistoryService.getHistory(t.getCustomer().getId());
@@ -31,3 +34,4 @@ public class AgentController {
         return agentService.recommend(t, history, risk);
     }
 }
+

@@ -26,8 +26,8 @@ public class TransactionService {
     private final AuditService auditService;
 
     @Transactional
-    public Transaction simulate(SimulateTransactionRequest req) {
-        Customer customer = customerRepository.findById(req.getCustomerId())
+    public Transaction simulate(SimulateTransactionRequest req, String workspaceId) {
+        Customer customer = customerRepository.findByIdAndWorkspaceId(req.getCustomerId(), workspaceId)
                 .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         int seed = ThreadLocalRandom.current().nextInt(1000, 999999);
@@ -41,6 +41,7 @@ public class TransactionService {
                 .paymentMethod(req.getPaymentMethod() != null ? req.getPaymentMethod() : PaymentMethod.UPI)
                 .simulatorSeed(seed)
                 .initiatedAt(now)
+                .workspaceId(workspaceId)
                 .build();
         
         t = transactionRepository.save(t);
@@ -56,20 +57,20 @@ public class TransactionService {
         
         paymentAttemptRepository.save(attempt);
 
-        auditService.record(t.getId(), AuditEventType.RISK_DETECTED, "Initial transaction failed with reason: " + req.getFailureReason());
+        auditService.record(t.getId(), workspaceId, AuditEventType.RISK_DETECTED, "Initial transaction failed with reason: " + req.getFailureReason());
 
         return t;
     }
 
-    public Page<Transaction> findAll(Pageable pageable) {
-        return transactionRepository.findAll(pageable);
+    public Page<Transaction> findAll(String workspaceId, Pageable pageable) {
+        return transactionRepository.findByWorkspaceId(workspaceId, pageable);
     }
 
-    public Page<Transaction> findByStatus(TransactionStatus status, Pageable pageable) {
-        return transactionRepository.findByStatus(status, pageable);
+    public Page<Transaction> findByStatus(String workspaceId, TransactionStatus status, Pageable pageable) {
+        return transactionRepository.findByStatusAndWorkspaceId(status, workspaceId, pageable);
     }
 
-    public Optional<Transaction> findById(String id) {
-        return transactionRepository.findById(id);
+    public Optional<Transaction> findById(String workspaceId, String id) {
+        return transactionRepository.findByIdAndWorkspaceId(id, workspaceId);
     }
 }

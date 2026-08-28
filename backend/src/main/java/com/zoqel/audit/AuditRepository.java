@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AuditRepository extends JpaRepository<AuditEvent, Long> {
-    List<AuditEvent> findByTransactionIdOrderByOccurredAtAsc(String transactionId);
-    List<AuditEvent> findAllByOrderByOccurredAtDesc();
-    Page<AuditEvent> findAllByOrderByOccurredAtDesc(Pageable pageable);
+    List<AuditEvent> findByTransactionIdAndWorkspaceIdOrderByOccurredAtAsc(String transactionId, String workspaceId);
+    List<AuditEvent> findAllByWorkspaceIdOrderByOccurredAtDesc(String workspaceId);
+    Page<AuditEvent> findAllByWorkspaceIdOrderByOccurredAtDesc(String workspaceId, Pageable pageable);
 }

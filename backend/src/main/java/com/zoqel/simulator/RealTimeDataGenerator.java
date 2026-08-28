@@ -51,14 +51,15 @@ public class RealTimeDataGenerator {
                 .build();
 
         try {
-            var transaction = transactionService.simulate(req);
+            var transaction = transactionService.simulate(req, randomCustomer.getWorkspaceId());
             log.info("Live data generated: FAILED transaction {}", transaction.getId());
             
             // Immediately run the AI agent on it!
-            recoveryCaseService.process(transaction.getId());
+            recoveryCaseService.process(transaction.getId(), randomCustomer.getWorkspaceId());
             log.info("Live AI processing complete for {}", transaction.getId());
         } catch (Exception e) {
             log.error("Failed to process live transaction", e);
         }
     }
 }
+

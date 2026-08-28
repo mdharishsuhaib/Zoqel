@@ -35,7 +35,7 @@ public class SecurityConfig {
             )
                         .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> 
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage())
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
                 )
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -46,5 +46,6 @@ public class SecurityConfig {
 
     
 }
+
 
 

@@ -14,8 +14,8 @@ public class CustomerHistoryService {
 
     private final TransactionRepository transactionRepository;
 
-    public CustomerHistory getHistory(String customerId) {
-        List<Transaction> transactions = transactionRepository.findByCustomerId(customerId);
+    public CustomerHistory getHistory(String customerId, String workspaceId) {
+        List<Transaction> transactions = transactionRepository.findByCustomerIdAndWorkspaceId(customerId, workspaceId);
         
         int total = transactions.size();
         int successful = 0;
@@ -54,3 +54,4 @@ public class CustomerHistoryService {
                 .build();
     }
 }
+

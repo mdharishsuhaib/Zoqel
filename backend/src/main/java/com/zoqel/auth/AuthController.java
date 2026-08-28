@@ -14,7 +14,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+
 public class AuthController {
 
     private final JwtService jwtService;
@@ -80,4 +80,5 @@ public class AuthController {
         private final String token;
     }
 }
+
 

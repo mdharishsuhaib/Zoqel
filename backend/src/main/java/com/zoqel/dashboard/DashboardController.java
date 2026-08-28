@@ -4,6 +4,7 @@ import com.zoqel.recovery.RecoveryCaseRepository;
 import com.zoqel.recovery.RecoveryCaseStatus;
 import com.zoqel.transaction.TransactionRepository;
 import com.zoqel.transaction.TransactionStatus;
+import com.zoqel.workspace.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,37 +17,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DashboardController {
 
+    private final CurrentUserService currentUserService;
+
     private final TransactionRepository transactionRepository;
     private final RecoveryCaseRepository recoveryCaseRepository;
 
     @GetMapping("/metrics")
     public DashboardMetrics getMetrics() {
-        long totalTx = transactionRepository.count();
-        long failedTx = transactionRepository.countByStatus(TransactionStatus.FAILED)
-                + transactionRepository.countByStatus(TransactionStatus.RECOVERED)
-                + transactionRepository.countByStatus(TransactionStatus.ESCALATED)
-                + transactionRepository.countByStatus(TransactionStatus.IGNORED);
+        long totalTx = transactionRepository.countByWorkspaceId(currentUserService.getCurrentWorkspaceId());
+        long failedTx = transactionRepository.countByStatusAndWorkspaceId(TransactionStatus.FAILED, currentUserService.getCurrentWorkspaceId())
+                + transactionRepository.countByStatusAndWorkspaceId(TransactionStatus.RECOVERED, currentUserService.getCurrentWorkspaceId())
+                + transactionRepository.countByStatusAndWorkspaceId(TransactionStatus.ESCALATED, currentUserService.getCurrentWorkspaceId())
+                + transactionRepository.countByStatusAndWorkspaceId(TransactionStatus.IGNORED, currentUserService.getCurrentWorkspaceId());
 
-        long revenueAtRisk = transactionRepository.sumAmountByStatusIn(List.of(
+        long revenueAtRisk = transactionRepository.sumAmountByStatusInAndWorkspaceId(List.of(
                 TransactionStatus.FAILED, TransactionStatus.ESCALATED, TransactionStatus.IGNORED, TransactionStatus.RECOVERED
         ));
         
-        long revenueRecovered = transactionRepository.sumAmountByStatus(TransactionStatus.RECOVERED);
-        long failedOnlyAmount = transactionRepository.sumAmountByStatus(TransactionStatus.FAILED);
+        long revenueRecovered = transactionRepository.sumAmountByStatusAndWorkspaceId(TransactionStatus.RECOVERED, currentUserService.getCurrentWorkspaceId());
+        long failedOnlyAmount = transactionRepository.sumAmountByStatusAndWorkspaceId(TransactionStatus.FAILED, currentUserService.getCurrentWorkspaceId());
         long recoverableRevenue = revenueRecovered + (long)(failedOnlyAmount * 0.70);
 
-        long recoveryCandidates = recoveryCaseRepository.count();
-        long successfulRecoveries = recoveryCaseRepository.countByStatus(RecoveryCaseStatus.RECOVERED);
+        long recoveryCandidates = recoveryCaseRepository.countByWorkspaceId(currentUserService.getCurrentWorkspaceId());
+        long successfulRecoveries = recoveryCaseRepository.countByStatusAndWorkspaceId(RecoveryCaseStatus.RECOVERED, currentUserService.getCurrentWorkspaceId());
         double recoveryRate = recoveryCandidates > 0 ? ((double) successfulRecoveries / recoveryCandidates) * 100 : 0.0;
 
-        long interventions = recoveryCaseRepository.countByStatus(RecoveryCaseStatus.IN_PROGRESS)
+        long interventions = recoveryCaseRepository.countByStatusAndWorkspaceId(RecoveryCaseStatus.IN_PROGRESS, currentUserService.getCurrentWorkspaceId())
                 + successfulRecoveries
-                + recoveryCaseRepository.countByStatus(RecoveryCaseStatus.FAILED)
-                + recoveryCaseRepository.countByStatus(RecoveryCaseStatus.ESCALATED)
-                + recoveryCaseRepository.countByStatus(RecoveryCaseStatus.IGNORED);
+                + recoveryCaseRepository.countByStatusAndWorkspaceId(RecoveryCaseStatus.FAILED, currentUserService.getCurrentWorkspaceId())
+                + recoveryCaseRepository.countByStatusAndWorkspaceId(RecoveryCaseStatus.ESCALATED, currentUserService.getCurrentWorkspaceId())
+                + recoveryCaseRepository.countByStatusAndWorkspaceId(RecoveryCaseStatus.IGNORED, currentUserService.getCurrentWorkspaceId());
 
-        long humanEscalations = recoveryCaseRepository.countByStatus(RecoveryCaseStatus.ESCALATED);
-        long ignoredCases = recoveryCaseRepository.countByStatus(RecoveryCaseStatus.IGNORED);
+        long humanEscalations = recoveryCaseRepository.countByStatusAndWorkspaceId(RecoveryCaseStatus.ESCALATED, currentUserService.getCurrentWorkspaceId());
+        long ignoredCases = recoveryCaseRepository.countByStatusAndWorkspaceId(RecoveryCaseStatus.IGNORED, currentUserService.getCurrentWorkspaceId());
 
         return DashboardMetrics.builder()
                 .totalTransactionsAnalyzed(totalTx)
@@ -64,3 +67,4 @@ public class DashboardController {
                 .build();
     }
 }
+

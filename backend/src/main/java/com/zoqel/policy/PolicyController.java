@@ -1,6 +1,7 @@
 package com.zoqel.policy;
 
 import com.zoqel.exception.NotFoundException;
+import com.zoqel.workspace.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,11 +13,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PolicyController {
 
+    private final CurrentUserService currentUserService;
+
     private final PolicyRepository policyRepository;
 
     @GetMapping
     public List<PolicyRule> getRules() {
-        return policyRepository.findAll();
+        return policyRepository.findByWorkspaceId(currentUserService.getCurrentWorkspaceId());
     }
 
     @PutMapping("/{key}")
@@ -31,3 +34,4 @@ public class PolicyController {
         return rule;
     }
 }
+

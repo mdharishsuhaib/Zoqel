@@ -36,16 +36,16 @@ public class RecoveryCaseService {
     private final CustomerHistoryService customerHistoryService;
     private final org.springframework.transaction.support.TransactionTemplate transactionTemplate;
 
-    public RecoveryCase process(String transactionId) {
-        Transaction t = transactionRepository.findById(transactionId)
+    public RecoveryCase process(String transactionId, String workspaceId) {
+        Transaction t = transactionRepository.findByIdAndWorkspaceId(transactionId, workspaceId)
                 .orElseThrow(() -> new NotFoundException("Transaction not found"));
 
         if (t.getStatus() != TransactionStatus.FAILED) {
             throw new IllegalStateException("Can only process FAILED transactions");
         }
 
-        RecoveryCase initialRc = recoveryCaseRepository.findByTransactionId(transactionId)
-                .orElseGet(() -> RecoveryCase.builder().transactionId(transactionId).build());
+        RecoveryCase initialRc = recoveryCaseRepository.findByTransactionIdAndWorkspaceId(transactionId, workspaceId)
+                .orElseGet(() -> RecoveryCase.builder().transactionId(transactionId).workspaceId(workspaceId).build());
 
         if (initialRc.getStatus() == RecoveryCaseStatus.RECOVERED || initialRc.getStatus() == RecoveryCaseStatus.FAILED || initialRc.getStatus() == RecoveryCaseStatus.ESCALATED || initialRc.getStatus() == RecoveryCaseStatus.IGNORED) {
             return initialRc;
@@ -54,19 +54,19 @@ public class RecoveryCaseService {
         initialRc.setStatus(RecoveryCaseStatus.IN_PROGRESS);
         final RecoveryCase rc = recoveryCaseRepository.save(initialRc);
 
-        auditService.record(transactionId, rc.getId(), AuditEventType.RECOVERY_CASE_OPENED, "Opened recovery case");
+        auditService.record(transactionId, workspaceId, AuditEventType.RECOVERY_CASE_OPENED, "Opened recovery case");
 
-        RiskScore risk = riskDetectionService.assess(transactionId);
+        RiskScore risk = riskDetectionService.assess(transactionId, workspaceId);
         rc.setRecoveryProbability(risk.getEstimatedRecoveryProbability());
-        auditService.record(transactionId, rc.getId(), AuditEventType.PROBABILITY_CALCULATED, "score=" + risk.getScore() + " probability=" + risk.getEstimatedRecoveryProbability());
+        auditService.record(transactionId, workspaceId, AuditEventType.PROBABILITY_CALCULATED, "score=" + risk.getScore() + " probability=" + risk.getEstimatedRecoveryProbability());
 
-        CustomerHistory history = customerHistoryService.getHistory(t.getCustomer().getId());
+        CustomerHistory history = customerHistoryService.getHistory(t.getCustomer().getId(), workspaceId);
         
         // AI Call (Slow, outside transaction)
         AgentDecision agentDecision = agentService.recommend(t, history, risk);
         
         // Policy Check
-        PolicyDecision policyDecision = policyEngine.evaluate(t, rc, agentDecision);
+        PolicyDecision policyDecision = policyEngine.evaluate(t, rc, agentDecision, workspaceId);
         
         // Prepare immutable variables for the lambda
         final boolean isAllowed = policyDecision.isAllowed();
@@ -88,13 +88,13 @@ public class RecoveryCaseService {
             rc.setAgentReason(agentDecision.getReason());
             rc.setAgentConfidence(agentDecision.getConfidence());
             
-            auditService.record(transactionId, rc.getId(), AuditEventType.AGENT_DECISION, agentDecision.getDecision() + " (confidence=" + agentDecision.getConfidence() + "): " + agentDecision.getReason());
+            auditService.record(transactionId, workspaceId, AuditEventType.AGENT_DECISION, agentDecision.getDecision() + " (confidence=" + agentDecision.getConfidence() + "): " + agentDecision.getReason());
 
             rc.setPolicyDecision(isAllowed ? "ALLOWED" : "BLOCKED");
             rc.setPolicyReason(policyDecision.getReason());
 
             if (isAllowed) {
-                auditService.record(transactionId, rc.getId(), AuditEventType.POLICY_VALIDATED, "Action allowed by policy");
+                auditService.record(transactionId, workspaceId, AuditEventType.POLICY_VALIDATED, "Action allowed by policy");
 
                 rc.setLastAction(recommendedAction.name());
                 rc.setLastActionAt(Instant.now());
@@ -122,32 +122,32 @@ public class RecoveryCaseService {
                     }
                     transactionRepository.save(t);
                     
-                    auditService.record(transactionId, rc.getId(), AuditEventType.ACTION_EXECUTED, "Executed RETRY");
-                    auditService.record(transactionId, rc.getId(), AuditEventType.OUTCOME_RECORDED, "Retry outcome: " + simResult.getOutcome());
+                    auditService.record(transactionId, workspaceId, AuditEventType.ACTION_EXECUTED, "Executed RETRY");
+                    auditService.record(transactionId, workspaceId, AuditEventType.OUTCOME_RECORDED, "Retry outcome: " + simResult.getOutcome());
                 } else if (recommendedAction == RecoveryAction.NOTIFY) {
                     rc.setStatus(RecoveryCaseStatus.IN_PROGRESS);
-                    auditService.record(transactionId, rc.getId(), AuditEventType.ACTION_EXECUTED, "Executed NOTIFY");
-                    auditService.record(transactionId, rc.getId(), AuditEventType.OUTCOME_RECORDED, "Notification sent");
+                    auditService.record(transactionId, workspaceId, AuditEventType.ACTION_EXECUTED, "Executed NOTIFY");
+                    auditService.record(transactionId, workspaceId, AuditEventType.OUTCOME_RECORDED, "Notification sent");
                 } else if (recommendedAction == RecoveryAction.ESCALATE) {
                     rc.setStatus(RecoveryCaseStatus.ESCALATED);
                     t.setStatus(TransactionStatus.ESCALATED);
                     transactionRepository.save(t);
-                    auditService.record(transactionId, rc.getId(), AuditEventType.ACTION_EXECUTED, "Executed ESCALATE");
-                    auditService.record(transactionId, rc.getId(), AuditEventType.HUMAN_ESCALATED, "Escalated to human agent");
+                    auditService.record(transactionId, workspaceId, AuditEventType.ACTION_EXECUTED, "Executed ESCALATE");
+                    auditService.record(transactionId, workspaceId, AuditEventType.HUMAN_ESCALATED, "Escalated to human agent");
                 } else if (recommendedAction == RecoveryAction.IGNORE) {
                     rc.setStatus(RecoveryCaseStatus.IGNORED);
                     t.setStatus(TransactionStatus.IGNORED);
                     transactionRepository.save(t);
-                    auditService.record(transactionId, rc.getId(), AuditEventType.ACTION_EXECUTED, "Executed IGNORE");
-                    auditService.record(transactionId, rc.getId(), AuditEventType.OUTCOME_RECORDED, "Case ignored");
+                    auditService.record(transactionId, workspaceId, AuditEventType.ACTION_EXECUTED, "Executed IGNORE");
+                    auditService.record(transactionId, workspaceId, AuditEventType.OUTCOME_RECORDED, "Case ignored");
                 }
 
             } else {
-                auditService.record(transactionId, rc.getId(), AuditEventType.POLICY_BLOCKED, "Action blocked by policy: " + String.join(", ", policyDecision.getViolations()));
+                auditService.record(transactionId, workspaceId, AuditEventType.POLICY_BLOCKED, "Action blocked by policy: " + String.join(", ", policyDecision.getViolations()));
                 if (agentDecision.getRequiresHuman() != null && agentDecision.getRequiresHuman()) {
                     rc.setStatus(RecoveryCaseStatus.ESCALATED);
                     t.setStatus(TransactionStatus.ESCALATED);
-                    auditService.record(transactionId, rc.getId(), AuditEventType.HUMAN_ESCALATED, "Escalated due to policy block");
+                    auditService.record(transactionId, workspaceId, AuditEventType.HUMAN_ESCALATED, "Escalated due to policy block");
                 } else {
                     rc.setStatus(RecoveryCaseStatus.IGNORED);
                     t.setStatus(TransactionStatus.IGNORED);
@@ -157,7 +157,7 @@ public class RecoveryCaseService {
 
             if (rc.getStatus() == RecoveryCaseStatus.RECOVERED || rc.getStatus() == RecoveryCaseStatus.FAILED || rc.getStatus() == RecoveryCaseStatus.ESCALATED || rc.getStatus() == RecoveryCaseStatus.IGNORED) {
                 rc.setClosedAt(Instant.now());
-                auditService.record(transactionId, rc.getId(), AuditEventType.RECOVERY_CASE_CLOSED, "Closed case with status: " + rc.getStatus());
+                auditService.record(transactionId, workspaceId, AuditEventType.RECOVERY_CASE_CLOSED, "Closed case with status: " + rc.getStatus());
             }
 
             RecoveryCase result = recoveryCaseRepository.save(rc);
@@ -165,5 +165,9 @@ public class RecoveryCaseService {
         });
     }
 }
+
+
+
+
 
 

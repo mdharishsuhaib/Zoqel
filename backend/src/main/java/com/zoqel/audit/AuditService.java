@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -13,25 +14,22 @@ public class AuditService {
 
     private final AuditRepository auditRepository;
 
-    public AuditEvent record(String transactionId, AuditEventType type, String detail) {
-        return record(transactionId, null, type, detail);
-    }
-
-    public AuditEvent record(String transactionId, String recoveryCaseId, AuditEventType type, String detail) {
+    public void record(String transactionId, String workspaceId, AuditEventType type, String description) {
         AuditEvent event = AuditEvent.builder()
                 .transactionId(transactionId)
-                .recoveryCaseId(recoveryCaseId)
+                .workspaceId(workspaceId)
                 .eventType(type)
-                .eventDetail(detail)
+                .description(description)
+                .occurredAt(Instant.now())
                 .build();
-        return auditRepository.save(event);
+        auditRepository.save(event);
     }
 
-    public List<AuditEvent> getTimeline(String transactionId) {
-        return auditRepository.findByTransactionIdOrderByOccurredAtAsc(transactionId);
+    public List<AuditEvent> getHistoryForTransaction(String transactionId, String workspaceId) {
+        return auditRepository.findByTransactionIdAndWorkspaceIdOrderByOccurredAtAsc(transactionId, workspaceId);
     }
 
-    public Page<AuditEvent> getRecentEvents(Pageable pageable) {
-        return auditRepository.findAllByOrderByOccurredAtDesc(pageable);
+    public Page<AuditEvent> getRecentEvents(String workspaceId, Pageable pageable) {
+        return auditRepository.findAllByWorkspaceIdOrderByOccurredAtDesc(workspaceId, pageable);
     }
 }

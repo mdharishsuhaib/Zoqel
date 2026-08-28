@@ -8,6 +8,7 @@ import com.zoqel.transaction.PaymentAttemptRepository;
 import com.zoqel.transaction.Transaction;
 import com.zoqel.transaction.TransactionRepository;
 import com.zoqel.transaction.TransactionStatus;
+import com.zoqel.workspace.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,8 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class SimulatorController {
 
+    private final CurrentUserService currentUserService;
+
     private final PaymentSimulator paymentSimulator;
     private final TransactionRepository transactionRepository;
     private final PaymentAttemptRepository paymentAttemptRepository;
@@ -25,7 +28,7 @@ public class SimulatorController {
 
     @PostMapping("/retry/{transactionId}")
     public SimulationResult retry(@PathVariable String transactionId) {
-        Transaction t = transactionRepository.findById(transactionId)
+        Transaction t = transactionRepository.findByIdAndWorkspaceId(transactionId, currentUserService.getCurrentWorkspaceId())
                 .orElseThrow(() -> new NotFoundException("Transaction not found"));
 
         long attemptCount = paymentAttemptRepository.countByTransactionId(transactionId);
@@ -54,3 +57,4 @@ public class SimulatorController {
         return result;
     }
 }
+

@@ -16,11 +16,11 @@ public class RiskDetectionService {
     private final TransactionRepository transactionRepository;
     private final CustomerHistoryService customerHistoryService;
 
-    public RiskScore assess(String transactionId) {
-        Transaction t = transactionRepository.findById(transactionId)
+    public RiskScore assess(String transactionId, String workspaceId) {
+        Transaction t = transactionRepository.findByIdAndWorkspaceId(transactionId, workspaceId)
                 .orElseThrow(() -> new NotFoundException("Transaction not found"));
 
-        CustomerHistory history = customerHistoryService.getHistory(t.getCustomer().getId());
+        CustomerHistory history = customerHistoryService.getHistory(t.getCustomer().getId(), workspaceId);
         FailureReason reason = t.getFailureReason();
 
         int score = 50;
@@ -66,3 +66,4 @@ public class RiskDetectionService {
                 .build();
     }
 }
+
