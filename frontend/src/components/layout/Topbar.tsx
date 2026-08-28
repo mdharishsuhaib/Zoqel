@@ -1,14 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Bell, Activity, X } from 'lucide-react';
+import { Search, Bell, Activity, X, LogOut, ShieldAlert } from 'lucide-react';
 import { useUIStore } from '../../stores/uiStore';
 import { useQuery } from '@tanstack/react-query';
 import { getRecentAuditEvents } from '../../services/recoveryService';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../features/auth/AuthContext';
 
 export function Topbar() {
   const navigate = useNavigate();
   const { setCommandPaletteOpen } = useUIStore();
+  const { mode, user, logout } = useAuth();
+  
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dismissedIds, setDismissedIds] = useState<Set<number>>(new Set());
@@ -19,8 +22,6 @@ export function Topbar() {
     refetchInterval: 5000
   });
 
-  const visibleEvents = events ? events.filter((e: any) => !dismissedIds.has(e.id)) : [];
-
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -30,6 +31,31 @@ export function Topbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const visibleEvents = (events || []).filter((e: any) => !dismissedIds.has(e.id)).slice(0, 5);
+  
+  // Profile Dropdown state
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    function handleProfileClickOutside(event: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleProfileClickOutside);
+    return () => document.removeEventListener("mousedown", handleProfileClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const initials = mode === 'DEMO' ? 'DM' : user?.fullName ? user.fullName.substring(0, 2).toUpperCase() : 'DE';
+  const displayName = mode === 'DEMO' ? 'Demo Merchant' : user?.fullName || 'Zoqel User';
+  const displayEmail = mode === 'DEMO' ? 'demo@zoqel.ai' : user?.email || '';
 
   return (
     <header className="h-16 bg-white border-b border-[#E4E7EC] flex items-center px-6 gap-4 shrink-0 relative z-50">
@@ -45,15 +71,13 @@ export function Topbar() {
 
       <div className="flex-1" />
 
-      {/* LIVE indicator */}
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#ECFDF3] border border-[#ABEFC6]">
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-success" />
-        </span>
-        <span className="text-[#067647] text-xs font-semibold">LIVE</span>
-        <span className="text-[#4CA976] text-xs hidden sm:inline">Monitoring 10,000 transactions</span>
-      </div>
+      {/* Demo Mode Indicator */}
+      {mode === 'DEMO' && (
+        <div className="hidden md:flex items-center gap-2 bg-[#FFFAEB] border border-[#FEDF89] px-3 py-1.5 rounded-full mr-2">
+          <ShieldAlert size={14} className="text-[#B54708]" />
+          <span className="text-xs font-bold text-[#B54708] tracking-wide uppercase">Demo Mode &middot; Synthetic Data</span>
+        </div>
+      )}
 
       {/* Alerts / Activity Feed */}
       <div className="relative" ref={dropdownRef}>
@@ -69,21 +93,25 @@ export function Topbar() {
 
         <AnimatePresence>
           {isOpen && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              className="absolute right-0 mt-2 w-80 bg-white rounded-xl border border-[#E4E7EC] shadow-xl overflow-hidden"
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="absolute right-0 mt-2 w-[380px] bg-white rounded-xl shadow-[0_12px_32px_-12px_rgba(0,0,0,0.2)] border border-[#E4E7EC] overflow-hidden"
             >
-              <div className="p-4 border-b border-[#E4E7EC] bg-[#F9FAFB] flex justify-between items-center">
-                <h3 className="font-semibold text-[#101828]">Activity Feed</h3>
-                <span className="text-xs text-[#667085] bg-white px-2 py-0.5 rounded border border-[#E4E7EC]">Live</span>
+              <div className="px-4 py-3 border-b border-[#E4E7EC] bg-[#F9FAFB] flex items-center justify-between">
+                <h3 className="font-semibold text-[#101828] text-sm flex items-center gap-2">
+                  <Activity size={14} className="text-[#2B84EA]" />
+                  Live Activity Feed
+                </h3>
               </div>
-              <div className="max-h-96 overflow-y-auto p-2">
-                {!events ? (
-                  <div className="p-4 text-center text-sm text-[#667085]">Loading activities...</div>
-                ) : visibleEvents.length === 0 ? (
-                  <div className="p-4 text-center text-sm text-[#667085]">No recent activities found.</div>
+              
+              <div className="max-h-[400px] overflow-y-auto">
+                {visibleEvents.length === 0 ? (
+                  <div className="p-8 text-center text-sm text-[#667085]">
+                    No new activity.
+                  </div>
                 ) : (
                   <div className="space-y-1">
                     {visibleEvents.map((event: any) => (
@@ -96,7 +124,7 @@ export function Topbar() {
                               return next;
                             });
                           }}
-                          className="absolute top-2 right-2 p-1 text-[#9CA3AF] hover:text-[#4B5563] hover:bg-[#F2F4F7] rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute right-2 top-2 p-1 rounded-md text-[#9CA3AF] hover:text-[#475467] hover:bg-[#F2F4F7] opacity-0 group-hover:opacity-100 transition-opacity"
                           title="Dismiss"
                         >
                           <X size={14} />
@@ -105,7 +133,7 @@ export function Topbar() {
                           <span className="text-xs font-mono font-semibold text-[#2B84EA]">{event.eventType}</span>
                           <span className="text-[10px] text-[#9CA3AF]">{new Date(event.occurredAt).toLocaleTimeString()}</span>
                         </div>
-                        <div className="text-sm text-[#344054] leading-tight pr-2">{event.eventDetail}</div>
+                        <p className="text-sm text-[#475467] leading-snug">{event.eventDetail}</p>
                       </div>
                     ))}
                   </div>
@@ -117,16 +145,40 @@ export function Topbar() {
       </div>
 
       {/* User Profile / Logout */}
-      <div className="relative border-l border-[#E4E7EC] pl-4 ml-1">
+      <div className="relative border-l border-[#E4E7EC] pl-4 ml-1" ref={profileRef}>
         <button 
-          onClick={() => navigate('/')} 
+          onClick={() => setIsProfileOpen(!isProfileOpen)} 
           className="w-9 h-9 rounded-full bg-[#111827] flex items-center justify-center text-white text-sm font-bold shadow-sm hover:ring-2 hover:ring-[#2B84EA] hover:ring-offset-2 transition-all"
-          title="Sign out"
         >
-          DE
+          {initials}
         </button>
+        
+        <AnimatePresence>
+          {isProfileOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-[0_12px_32px_-12px_rgba(0,0,0,0.2)] border border-[#E4E7EC] overflow-hidden"
+            >
+              <div className="px-4 py-4 border-b border-[#E4E7EC] bg-[#F9FAFB]">
+                <div className="font-semibold text-[#101828] truncate">{displayName}</div>
+                {displayEmail && <div className="text-xs text-[#667085] truncate mt-0.5">{displayEmail}</div>}
+              </div>
+              <div className="p-2">
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#B42318] hover:bg-[#FEF3F2] rounded-lg transition-colors font-medium"
+                >
+                  <LogOut size={16} />
+                  {mode === 'DEMO' ? 'Exit Demo' : 'Sign out'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
     </header>
   );
 }

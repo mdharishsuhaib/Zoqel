@@ -1,5 +1,7 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { AuthProvider, useAuth } from '../features/auth/AuthContext';
+import { ProtectedRoute } from '../features/auth/ProtectedRoute';
 import { Layout } from '../components/layout/Layout';
 import { LandingPage } from '../features/landing/LandingPage';
 import { AuthPage } from '../features/auth/AuthPage';
@@ -26,31 +28,58 @@ function ScrollToTop() {
   return null;
 }
 
+function DemoRoute() {
+  const { enableDemoMode } = useAuth();
+  useEffect(() => {
+    enableDemoMode();
+  }, [enableDemoMode]);
+  return <Navigate to="/app" replace />;
+}
+
+// Redirect logged-in users away from public auth routes
+function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
+  const { mode } = useAuth();
+  if (mode !== 'UNAUTHENTICATED') {
+    return <Navigate to="/app" replace />;
+  }
+  return <>{children}</>;
+}
+
 export function App() {
   return (
-    <>
+    <AuthProvider>
       <ScrollToTop />
       <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<AuthPage />} />
-      <Route path="/proof" element={<ProofModePage />} />
-      <Route path="/docs" element={<DocsPage />} />
-      <Route path="/privacy" element={<PrivacyPage />} />
-      <Route path="/app" element={<Layout />}>
-        <Route index element={<OverviewPage />} />
-        <Route path="overview" element={<OverviewPage />} />
-        <Route path="recovery" element={<RecoveryQueuePage />} />
-        <Route path="payments" element={<PaymentsPage />} />
-        <Route path="payments/:id" element={<TransactionDetailPage />} />
-        <Route path="simulator" element={<SimulatorPage />} />
-        <Route path="agent" element={<AgentPage />} />
-        <Route path="analytics" element={<AnalyticsPage />} />
-        <Route path="audit" element={<AuditPage />} />
-        <Route path="review" element={<HumanReviewPage />} />
-        <Route path="customers" element={<CustomersPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-      </Route>
-    </Routes>
-    </>
+        <Route path="/" element={<LandingPage />} />
+        
+        {/* Auth Routes */}
+        <Route path="/login" element={<PublicOnlyRoute><AuthPage mode="login" /></PublicOnlyRoute>} />
+        <Route path="/signup" element={<PublicOnlyRoute><AuthPage mode="signup" /></PublicOnlyRoute>} />
+        <Route path="/demo" element={<DemoRoute />} />
+
+        {/* Public Marketing/Legal */}
+        <Route path="/proof" element={<ProofModePage />} />
+        <Route path="/docs" element={<DocsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+
+        {/* Protected App Routes */}
+        <Route path="/app" element={<ProtectedRoute />}>
+          <Route element={<Layout />}>
+            <Route index element={<OverviewPage />} />
+            <Route path="overview" element={<OverviewPage />} />
+            <Route path="recovery" element={<RecoveryQueuePage />} />
+            <Route path="payments" element={<PaymentsPage />} />
+            <Route path="payments/:id" element={<TransactionDetailPage />} />
+            <Route path="simulator" element={<SimulatorPage />} />
+            <Route path="agent" element={<AgentPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="audit" element={<AuditPage />} />
+            <Route path="review" element={<HumanReviewPage />} />
+            <Route path="customers" element={<CustomersPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }

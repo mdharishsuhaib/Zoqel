@@ -30,7 +30,7 @@ export function LandingPage() {
 
             <div className="flex items-center gap-4">
               <button onClick={() => navigate('/login')} className="text-sm font-medium text-[#475467] hover:text-[#101828] transition-colors">Sign in</button>
-              <button onClick={() => navigate('/login', { state: { isSignup: true } })} className="text-sm font-medium px-4 py-2 bg-[#2B84EA] text-white rounded-lg hover:bg-[#1A6DD0] transition-all shadow-sm hover:shadow">Get Started</button>
+              <button onClick={() => navigate('/signup')} className="text-sm font-medium px-4 py-2 bg-[#2B84EA] text-white rounded-lg hover:bg-[#1A6DD0] transition-all shadow-sm hover:shadow">Get Started</button>
             </div>
           </div>
         </div>
@@ -67,6 +67,30 @@ export function LandingPage() {
             >
               Stop relying on static retry logic. Zoqel is an autonomous intelligence layer that <span className="font-semibold text-[#101828]">automatically</span> recovers lost revenue from failed payments.
             </motion.p>
+            
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              transition={{ delay: 1.2 }}
+              className="flex flex-col items-center gap-4"
+            >
+              <div className="flex justify-center gap-4">
+                <button 
+                  onClick={() => navigate('/demo')} 
+                  className="px-8 py-4 text-lg font-bold rounded-xl text-white bg-[#2B84EA] hover:bg-[#1A6DD0] transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-3"
+                >
+                  Explore Live Demo <ArrowRight size={20} className="text-[#93C5FD]" />
+                </button>
+                <button 
+                  onClick={() => navigate('/signup')} 
+                  className="px-8 py-4 text-lg font-bold rounded-xl text-[#101828] bg-white border-2 border-[#E4E7EC] hover:bg-[#F9FAFB] transition-all shadow-sm"
+                >
+                  Get Started
+                </button>
+              </div>
+              <div className="text-sm text-[#667085] flex items-center gap-2">
+                No account required &middot; Synthetic payment data &middot; Live AI recovery simulation
+              </div>
+            </motion.div>
 
             <motion.div 
               variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ delay: 1.2 }}
@@ -338,7 +362,7 @@ export function LandingPage() {
         >
           <h2 className="text-4xl font-extrabold text-[#101828] mb-6">Ready to stop losing revenue?</h2>
           <p className="text-xl text-[#667085] max-w-2xl mx-auto mb-10">Start recovering lost revenue today — no complex setup, no static retry rules, just autonomous recovery from day one.</p>
-          <button onClick={() => navigate('/login', { state: { isSignup: true } })} className="px-10 py-4 text-lg font-bold rounded-xl text-white bg-[#2B84EA] hover:bg-[#1A6DD0] transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-3">
+          <button onClick={() => navigate('/signup')} className="px-10 py-4 text-lg font-bold rounded-xl text-white bg-[#2B84EA] hover:bg-[#1A6DD0] transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-3">
             Get Started <ArrowRight size={20} className="text-[#93C5FD]" />
           </button>
         </motion.div>
