@@ -5,6 +5,7 @@ import { ProtectedRoute } from '../features/auth/ProtectedRoute';
 import { Layout } from '../components/layout/Layout';
 import { LandingPage } from '../features/landing/LandingPage';
 import { AuthPage } from '../features/auth/AuthPage';
+import { OnboardingWizard } from '../features/onboarding/OnboardingWizard';
 import { OverviewPage } from '../features/overview/OverviewPage';
 import { RecoveryQueuePage } from '../features/recovery/RecoveryQueuePage';
 import { PaymentsPage } from '../features/payments/PaymentsPage';
@@ -63,6 +64,9 @@ export function App() {
         <Route path="/privacy" element={<PrivacyPage />} />
 
         {/* Protected App Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/onboarding" element={<OnboardingWizard />} />
+        </Route>
         <Route path="/app" element={<ProtectedRoute />}>
           <Route element={<Layout />}>
             <Route index element={<OverviewPage />} />
@@ -83,3 +87,4 @@ export function App() {
     </AuthProvider>
   );
 }
+
