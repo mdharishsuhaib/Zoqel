@@ -8,29 +8,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-import java.time.LocalDateTime;
-
 @RestController
 @RequestMapping("/api/customers")
 @RequiredArgsConstructor
 public class CustomerController {
 
     private final CurrentUserService currentUserService;
-
     private final CustomerRepository customerRepository;
     private final CustomerHistoryService customerHistoryService;
 
     @PostMapping
     public Customer createCustomer(@RequestBody CreateCustomerRequest req) {
         Customer c = Customer.builder()
-            .id(UUID.randomUUID().toString())
-            .fullName(req.getFullName())
+            .name(req.getName())
             .email(req.getEmail())
             .phone(req.getPhone())
-            .riskProfile("LOW")
+            .riskTier(RiskTier.LOW)
             .workspaceId(currentUserService.getCurrentWorkspaceId())
-            .createdAt(LocalDateTime.now())
             .build();
         return customerRepository.save(c);
     }
@@ -48,7 +42,7 @@ public class CustomerController {
 
     @GetMapping("/{id}/history")
     public CustomerHistory getCustomerHistory(@PathVariable String id) {
-        if (!customerRepository.findByIdAndWorkspaceId(id, currentUserService.getCurrentWorkspaceId()).isPresent()) {
+        if (customerRepository.findByIdAndWorkspaceId(id, currentUserService.getCurrentWorkspaceId()).isEmpty()) {
             throw new NotFoundException("Customer not found with id: " + id);
         }
         return customerHistoryService.getHistory(id, currentUserService.getCurrentWorkspaceId());
@@ -56,7 +50,7 @@ public class CustomerController {
 
     @Data
     static class CreateCustomerRequest {
-        private String fullName;
+        private String name;
         private String email;
         private String phone;
     }
