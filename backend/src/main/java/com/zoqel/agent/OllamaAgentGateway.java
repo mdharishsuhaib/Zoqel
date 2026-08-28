@@ -39,7 +39,7 @@ public class OllamaAgentGateway implements AgentGateway {
             );
 
             Map response = ollamaClient.post()
-                    .uri("/v1/chat/completions")
+                    .uri("/chat/completions")
                     .body(requestBody)
                     .retrieve()
                     .body(Map.class);
