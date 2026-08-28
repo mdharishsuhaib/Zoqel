@@ -17,6 +17,8 @@ import java.util.UUID;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
+    private final JwtService jwtService;
+
     private final AppUserRepository userRepository;
 
     @PostMapping("/register")
@@ -37,7 +39,7 @@ public class AuthController {
         
         userRepository.save(user);
 
-        return ResponseEntity.ok(new AuthResponse(user.getId(), user.getFullName(), user.getEmail(), "mock-jwt-token-" + user.getId()));
+        return ResponseEntity.ok(new AuthResponse(user.getId(), user.getFullName(), user.getEmail(), jwtService.generateToken(user)));
     }
 
     @PostMapping("/login")
@@ -53,7 +55,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
 
-        return ResponseEntity.ok(new AuthResponse(user.getId(), user.getFullName(), user.getEmail(), "mock-jwt-token-" + user.getId()));
+        return ResponseEntity.ok(new AuthResponse(user.getId(), user.getFullName(), user.getEmail(), jwtService.generateToken(user)));
     }
 
     @Data
@@ -78,3 +80,4 @@ public class AuthController {
         private final String token;
     }
 }
+
