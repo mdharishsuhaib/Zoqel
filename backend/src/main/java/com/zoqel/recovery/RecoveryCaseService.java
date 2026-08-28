@@ -37,7 +37,6 @@ public class RecoveryCaseService {
     private final org.springframework.transaction.support.TransactionTemplate transactionTemplate;
 
     public RecoveryCase process(String transactionId) {
-        log.info("RecoveryCaseService.process() started for {}", transactionId);
         Transaction t = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new NotFoundException("Transaction not found"));
 
@@ -162,9 +161,9 @@ public class RecoveryCaseService {
             }
 
             RecoveryCase result = recoveryCaseRepository.save(rc);
-            log.info("RecoveryCaseService.process() ended for {}", transactionId);
             return result;
         });
     }
 }
+
 
