@@ -36,7 +36,6 @@ public class RecoveryCaseService {
     private final AuditService auditService;
     private final CustomerHistoryService customerHistoryService;
 
-    @Transactional
     public RecoveryCase process(String transactionId) {
         Transaction t = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new NotFoundException("Transaction not found"));

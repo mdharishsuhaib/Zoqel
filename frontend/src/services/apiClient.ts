@@ -6,6 +6,7 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
+  console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
   const token = localStorage.getItem('zoqel_token');
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
