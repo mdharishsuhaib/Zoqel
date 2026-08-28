@@ -1,4 +1,4 @@
-package com.zoqel.auth;
+package com.zoqel.workspace;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -11,20 +11,17 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "app_users")
+@Table(name = "workspaces")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppUser {
+public class Workspace {
     @Id
     private String id;
-    private String fullName;
-    private String email;
-    private String passwordHash;
-
-    @Column(name = "workspace_id")
-    private String workspaceId;
+    private String name;
+    private String businessType;
+    private String currency;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
-

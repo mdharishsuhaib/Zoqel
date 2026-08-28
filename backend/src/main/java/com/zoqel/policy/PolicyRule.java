@@ -12,6 +12,9 @@ import java.time.Instant;
 @AllArgsConstructor
 public class PolicyRule {
 
+    @Column(name = "workspace_id")
+    private String workspaceId;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,3 +46,4 @@ public class PolicyRule {
         updatedAt = Instant.now();
     }
 }
+

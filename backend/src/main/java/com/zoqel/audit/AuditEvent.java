@@ -12,6 +12,9 @@ import java.time.Instant;
 @AllArgsConstructor
 public class AuditEvent {
 
+    @Column(name = "workspace_id")
+    private String workspaceId;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,3 +44,4 @@ public class AuditEvent {
         }
     }
 }
+

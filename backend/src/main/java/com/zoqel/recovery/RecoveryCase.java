@@ -14,6 +14,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RecoveryCase {
 
+    @Column(name = "workspace_id")
+    private String workspaceId;
+
     @Id
     private String id;
 
@@ -89,3 +92,4 @@ public class RecoveryCase {
         updatedAt = Instant.now();
     }
 }
+

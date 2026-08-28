@@ -13,6 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Customer {
 
+    @Column(name = "workspace_id")
+    private String workspaceId;
+
     @Id
     private String id;
 
@@ -49,3 +52,4 @@ public class Customer {
         updatedAt = Instant.now();
     }
 }
+

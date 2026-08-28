@@ -14,6 +14,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Transaction {
 
+    @Column(name = "workspace_id")
+    private String workspaceId;
+
     @Id
     private String id;
 
@@ -70,3 +73,4 @@ public class Transaction {
         updatedAt = Instant.now();
     }
 }
+
