@@ -2,6 +2,7 @@ package com.zoqel.auth;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,4 +28,5 @@ public class AppUser {
     private String workspaceId;
     private LocalDateTime createdAt;
 }
+
 
