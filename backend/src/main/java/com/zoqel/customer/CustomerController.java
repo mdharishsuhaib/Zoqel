@@ -24,6 +24,7 @@ public class CustomerController {
             .email(req.getEmail())
             .phone(req.getPhone())
             .riskTier(RiskTier.LOW)
+            .joinedAt(java.time.Instant.now())
             .workspaceId(currentUserService.getCurrentWorkspaceId())
             .build();
         return customerRepository.save(c);
