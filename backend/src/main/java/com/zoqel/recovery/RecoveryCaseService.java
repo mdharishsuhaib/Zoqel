@@ -18,7 +18,6 @@ import com.zoqel.simulator.SimulationResult;
 import com.zoqel.transaction.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -45,15 +44,15 @@ public class RecoveryCaseService {
             throw new IllegalStateException("Can only process FAILED transactions");
         }
 
-        RecoveryCase rc = recoveryCaseRepository.findByTransactionId(transactionId)
+        RecoveryCase initialRc = recoveryCaseRepository.findByTransactionId(transactionId)
                 .orElseGet(() -> RecoveryCase.builder().transactionId(transactionId).build());
 
-        if (rc.getStatus() == RecoveryCaseStatus.RECOVERED || rc.getStatus() == RecoveryCaseStatus.FAILED || rc.getStatus() == RecoveryCaseStatus.ESCALATED || rc.getStatus() == RecoveryCaseStatus.IGNORED) {
-            return rc;
+        if (initialRc.getStatus() == RecoveryCaseStatus.RECOVERED || initialRc.getStatus() == RecoveryCaseStatus.FAILED || initialRc.getStatus() == RecoveryCaseStatus.ESCALATED || initialRc.getStatus() == RecoveryCaseStatus.IGNORED) {
+            return initialRc;
         }
 
-        rc.setStatus(RecoveryCaseStatus.IN_PROGRESS);
-        rc = recoveryCaseRepository.save(rc);
+        initialRc.setStatus(RecoveryCaseStatus.IN_PROGRESS);
+        final RecoveryCase rc = recoveryCaseRepository.save(initialRc);
 
         auditService.record(transactionId, rc.getId(), AuditEventType.RECOVERY_CASE_OPENED, "Opened recovery case");
 
@@ -62,8 +61,28 @@ public class RecoveryCaseService {
         auditService.record(transactionId, rc.getId(), AuditEventType.PROBABILITY_CALCULATED, "score=" + risk.getScore() + " probability=" + risk.getEstimatedRecoveryProbability());
 
         CustomerHistory history = customerHistoryService.getHistory(t.getCustomer().getId());
+        
+        // AI Call (Slow, outside transaction)
         AgentDecision agentDecision = agentService.recommend(t, history, risk);
+        
+        // Policy Check
+        PolicyDecision policyDecision = policyEngine.evaluate(t, rc, agentDecision);
+        
+        // Prepare immutable variables for the lambda
+        final boolean isAllowed = policyDecision.isAllowed();
+        final RecoveryAction recommendedAction = agentDecision.getDecision();
+        
+        final SimulationResult simResult;
+        final int nextAttempt;
+        if (isAllowed && recommendedAction == RecoveryAction.RETRY) {
+            nextAttempt = rc.getRetryCount() + 1;
+            simResult = paymentSimulator.simulate(t, nextAttempt);
+        } else {
+            nextAttempt = rc.getRetryCount();
+            simResult = null;
+        }
 
+        // Final Persistence (Short, inside transaction)
         return transactionTemplate.execute(status -> {
             rc.setAgentDecision(agentDecision.getDecision());
             rc.setAgentReason(agentDecision.getReason());
@@ -71,20 +90,16 @@ public class RecoveryCaseService {
             
             auditService.record(transactionId, rc.getId(), AuditEventType.AGENT_DECISION, agentDecision.getDecision() + " (confidence=" + agentDecision.getConfidence() + "): " + agentDecision.getReason());
 
-            PolicyDecision policyDecision = policyEngine.evaluate(t, rc, agentDecision);
-            rc.setPolicyDecision(policyDecision.isAllowed() ? "ALLOWED" : "BLOCKED");
+            rc.setPolicyDecision(isAllowed ? "ALLOWED" : "BLOCKED");
             rc.setPolicyReason(policyDecision.getReason());
 
-            if (policyDecision.isAllowed()) {
+            if (isAllowed) {
                 auditService.record(transactionId, rc.getId(), AuditEventType.POLICY_VALIDATED, "Action allowed by policy");
 
-                RecoveryAction action = agentDecision.getDecision();
-                rc.setLastAction(action.name());
+                rc.setLastAction(recommendedAction.name());
                 rc.setLastActionAt(Instant.now());
 
-                if (action == RecoveryAction.RETRY) {
-                    int nextAttempt = rc.getRetryCount() + 1;
-                    SimulationResult simResult = paymentSimulator.simulate(t, nextAttempt);
+                if (recommendedAction == RecoveryAction.RETRY) {
                     rc.setRetryCount(nextAttempt);
                     
                     PaymentAttempt attempt = PaymentAttempt.builder()
@@ -109,17 +124,17 @@ public class RecoveryCaseService {
                     
                     auditService.record(transactionId, rc.getId(), AuditEventType.ACTION_EXECUTED, "Executed RETRY");
                     auditService.record(transactionId, rc.getId(), AuditEventType.OUTCOME_RECORDED, "Retry outcome: " + simResult.getOutcome());
-                } else if (action == RecoveryAction.NOTIFY) {
+                } else if (recommendedAction == RecoveryAction.NOTIFY) {
                     rc.setStatus(RecoveryCaseStatus.IN_PROGRESS);
                     auditService.record(transactionId, rc.getId(), AuditEventType.ACTION_EXECUTED, "Executed NOTIFY");
                     auditService.record(transactionId, rc.getId(), AuditEventType.OUTCOME_RECORDED, "Notification sent");
-                } else if (action == RecoveryAction.ESCALATE) {
+                } else if (recommendedAction == RecoveryAction.ESCALATE) {
                     rc.setStatus(RecoveryCaseStatus.ESCALATED);
                     t.setStatus(TransactionStatus.ESCALATED);
                     transactionRepository.save(t);
                     auditService.record(transactionId, rc.getId(), AuditEventType.ACTION_EXECUTED, "Executed ESCALATE");
                     auditService.record(transactionId, rc.getId(), AuditEventType.HUMAN_ESCALATED, "Escalated to human agent");
-                } else if (action == RecoveryAction.IGNORE) {
+                } else if (recommendedAction == RecoveryAction.IGNORE) {
                     rc.setStatus(RecoveryCaseStatus.IGNORED);
                     t.setStatus(TransactionStatus.IGNORED);
                     transactionRepository.save(t);
