@@ -28,10 +28,11 @@ public class AgentController {
         Transaction t = transactionRepository.findByIdAndWorkspaceId(transactionId, currentUserService.getCurrentWorkspaceId())
                 .orElseThrow(() -> new NotFoundException("Transaction not found"));
 
-        CustomerHistory history = customerHistoryService.getHistory(t.getCustomer().getId());
+        CustomerHistory history = customerHistoryService.getHistory(t.getCustomer().getId(), currentUserService.getCurrentWorkspaceId());
         RiskScore risk = riskDetectionService.assess(transactionId);
 
         return agentService.recommend(t, history, risk);
     }
 }
+
 

@@ -24,7 +24,7 @@ public class PolicyController {
 
     @PutMapping("/{key}")
     public PolicyRule updateRule(@PathVariable String key, @RequestBody Map<String, String> body) {
-        PolicyRule rule = policyRepository.findByRuleKey(key)
+        PolicyRule rule = policyRepository.findByRuleKeyAndWorkspaceId(key, currentUserService.getCurrentWorkspaceId())
                 .orElseThrow(() -> new NotFoundException("Policy rule not found: " + key));
         
         if (body.containsKey("value")) {
@@ -34,4 +34,5 @@ public class PolicyController {
         return rule;
     }
 }
+
 

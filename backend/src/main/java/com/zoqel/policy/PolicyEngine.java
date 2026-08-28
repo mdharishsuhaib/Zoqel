@@ -38,27 +38,27 @@ public class PolicyEngine {
         }
 
         if (transaction.getFailureReason() == FailureReason.INSUFFICIENT_FUNDS 
-            && getBoolRule("block_insufficient_funds_retry", true) 
+            && getBoolRule("block_insufficient_funds_retry", true, workspaceId) 
             && agentDecision.getDecision() == RecoveryAction.RETRY) {
             violations.add("Cannot automatically retry insufficient funds");
         }
 
         if (transaction.getFailureReason() == FailureReason.DUPLICATE_ATTEMPT 
-            && getBoolRule("block_duplicate_attempt_retry", true) 
+            && getBoolRule("block_duplicate_attempt_retry", true, workspaceId) 
             && agentDecision.getDecision() == RecoveryAction.RETRY) {
             violations.add("Cannot retry duplicate attempt");
         }
 
-        CustomerHistory history = customerHistoryService.getHistory(transaction.getCustomer().getId());
+        CustomerHistory history = customerHistoryService.getHistory(transaction.getCustomer().getId(), workspaceId);
         if (history.getFailedPayments() >= 3 
-            && getBoolRule("require_human_for_repeated_failure", true) 
+            && getBoolRule("require_human_for_repeated_failure", true, workspaceId) 
             && (agentDecision.getRequiresHuman() == null || !agentDecision.getRequiresHuman())) {
             violations.add("High failure count requires human review");
         }
 
         // Simplistic assumption for interventions for now
         int totalInterventions = recoveryCase.getRetryCount(); // plus notifications if counted
-        if (totalInterventions >= getIntRule("max_interventions_per_case", 2)) {
+        if (totalInterventions >= getIntRule("max_interventions_per_case", 2, workspaceId)) {
             violations.add("Max interventions per case exceeded");
         }
 
@@ -78,7 +78,7 @@ public class PolicyEngine {
         return policyRepository.findByRuleKeyAndWorkspaceId(key, workspaceId).map(r -> Double.parseDouble(r.getRuleValue())).orElse(defaultValue);
     }
 
-    private boolean getBoolRule(String key, boolean defaultValue) {
+    private boolean getBoolRule(String key, boolean defaultValue, String workspaceId) {
         return policyRepository.findByRuleKeyAndWorkspaceId(key, workspaceId).map(r -> Boolean.parseBoolean(r.getRuleValue())).orElse(defaultValue);
     }
 
@@ -86,4 +86,5 @@ public class PolicyEngine {
         return policyRepository.findByRuleKeyAndWorkspaceId(key, workspaceId).map(r -> Long.parseLong(r.getRuleValue())).orElse(defaultValue);
     }
 }
+
 

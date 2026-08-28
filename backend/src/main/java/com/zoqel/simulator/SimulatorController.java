@@ -52,9 +52,10 @@ public class SimulatorController {
         }
         transactionRepository.save(t);
 
-        auditService.record(t.getId(), AuditEventType.ACTION_EXECUTED, "Manual retry triggered. Outcome: " + result.getOutcome());
+        auditService.record(t.getId(), currentUserService.getCurrentWorkspaceId(), AuditEventType.ACTION_EXECUTED, "Manual retry triggered. Outcome: " + result.getOutcome());
 
         return result;
     }
 }
+
 
