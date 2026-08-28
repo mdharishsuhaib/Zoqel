@@ -27,10 +27,11 @@ public class RealTimeDataGenerator {
 
     private boolean enabled = true;
 
-    // Runs every 10 seconds to generate a live transaction
-    @Scheduled(fixedRate = 10000)
+    // Runs every 10 seconds to generate a live transaction, starting 30s after boot
+    @Scheduled(initialDelay = 30000, fixedRate = 10000)
     public void generateLiveTransaction() {
         if (!enabled) return;
+        log.info("RealTimeDataGenerator first execution (or scheduled execution) started");
 
         List<Customer> customers = customerRepository.findAll();
         if (customers.isEmpty()) return;
