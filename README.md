@@ -100,7 +100,7 @@ The repository includes extensive integration tests that run directly against th
 ### Backend (Spring Boot)
 ```bash
 cd backend
-# Set environment variables: DB_URL, JWT_SECRET, OPENROUTER_API_KEY
+# Set environment variables: DB_URL, JWT_SECRET, OLLAMA_API_KEY
 mvn spring-boot:run
 # Flyway runs all migrations automatically on startup
 ```
