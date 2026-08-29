@@ -19,16 +19,38 @@ export function AuthPage({ mode }: AuthPageProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const isPasswordValid = (pw: string) => {
+    return (
+      pw.length >= 8 &&
+      /[A-Z]/.test(pw) &&
+      /[a-z]/.test(pw) &&
+      /[0-9]/.test(pw) &&
+      /[^A-Za-z0-9]/.test(pw)
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
-    if (!isLogin && password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
+    if (!isLogin) {
+      if (!isPasswordValid(password)) {
+        setError("Password must be at least 8 characters and contain an uppercase letter, lowercase letter, number, and special character.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError("Passwords do not match.");
+        return;
+      }
+      if (!termsAccepted || !privacyAccepted) {
+        setError("You must accept the Terms of Service and Privacy Policy.");
+        return;
+      }
     }
 
     setIsLoading(true);
@@ -138,17 +160,33 @@ export function AuthPage({ mode }: AuthPageProps) {
               )}
               
               {!isLogin && (
-                <div className="flex items-center">
-                  <input
-                    id="terms"
-                    name="terms"
-                    type="checkbox"
-                    required
-                    className="h-4 w-4 text-[#2B84EA] focus:ring-[#2B84EA] border-[#D0D5DD] rounded"
-                  />
-                  <label htmlFor="terms" className="ml-2 block text-sm text-[#475467]">
-                    I agree to the Terms of Service
-                  </label>
+                <div className="flex flex-col gap-3 mt-4">
+                  <div className="flex items-center">
+                    <input
+                      id="terms"
+                      name="terms"
+                      type="checkbox"
+                      checked={termsAccepted}
+                      onChange={(e) => setTermsAccepted(e.target.checked)}
+                      className="h-4 w-4 text-[#2B84EA] focus:ring-[#2B84EA] border-[#D0D5DD] rounded"
+                    />
+                    <label htmlFor="terms" className="ml-2 block text-sm text-[#475467]">
+                      I agree to the <a href="#" className="text-[#2B84EA] hover:underline">Terms of Service</a>
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      id="privacy"
+                      name="privacy"
+                      type="checkbox"
+                      checked={privacyAccepted}
+                      onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                      className="h-4 w-4 text-[#2B84EA] focus:ring-[#2B84EA] border-[#D0D5DD] rounded"
+                    />
+                    <label htmlFor="privacy" className="ml-2 block text-sm text-[#475467]">
+                      I acknowledge the <a href="#" className="text-[#2B84EA] hover:underline">Privacy Policy</a>
+                    </label>
+                  </div>
                 </div>
               )}
 
