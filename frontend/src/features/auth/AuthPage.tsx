@@ -113,9 +113,11 @@ export function AuthPage({ mode }: AuthPageProps) {
             <form onSubmit={handleSubmit} className="space-y-5">
               {!isLogin && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-[#344054]">Business Name</label>
+                  <label htmlFor="fullName" className="block text-sm font-medium text-[#344054]">
+                    Business Name <span className="text-[#667085] font-normal">(Optional)</span>
+                  </label>
                   <div className="mt-1">
-                    <input id="fullName" name="fullName" autoComplete="organization" type="text" required value={fullName}
+                    <input id="fullName" name="fullName" autoComplete="organization" type="text" value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       className="appearance-none block w-full px-3 py-2.5 border border-[#D0D5DD] rounded-lg shadow-sm placeholder-[#98A2B3] focus:outline-none focus:ring-[#2B84EA] focus:border-[#2B84EA] sm:text-sm transition-colors"
                       placeholder="e.g. Acme Corp"
@@ -166,6 +168,7 @@ export function AuthPage({ mode }: AuthPageProps) {
                       id="terms"
                       name="terms"
                       type="checkbox"
+                      required
                       checked={termsAccepted}
                       onChange={(e) => setTermsAccepted(e.target.checked)}
                       className="h-4 w-4 text-[#2B84EA] focus:ring-[#2B84EA] border-[#D0D5DD] rounded"
@@ -179,6 +182,7 @@ export function AuthPage({ mode }: AuthPageProps) {
                       id="privacy"
                       name="privacy"
                       type="checkbox"
+                      required
                       checked={privacyAccepted}
                       onChange={(e) => setPrivacyAccepted(e.target.checked)}
                       className="h-4 w-4 text-[#2B84EA] focus:ring-[#2B84EA] border-[#D0D5DD] rounded"
