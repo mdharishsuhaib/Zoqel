@@ -84,7 +84,7 @@ public class DashboardController {
         }
         
         for (com.zoqel.transaction.Transaction t : txs) {
-            String d = t.getCreatedAt().toLocalDate().format(java.time.format.DateTimeFormatter.ofPattern("MMM d"));
+            String d = t.getCreatedAt().atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(java.time.format.DateTimeFormatter.ofPattern("MMM d"));
             if (dailyData.containsKey(d)) {
                 java.util.Map<String, Long> metrics = dailyData.get(d);
                 long amount = t.getAmountPaise() / 100;
@@ -110,3 +110,4 @@ public class DashboardController {
         return result;
     }
 }
+
