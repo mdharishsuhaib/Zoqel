@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import React from 'react';
 import { AuthProvider, useAuth } from '../features/auth/AuthContext';
 import { ProtectedRoute } from '../features/auth/ProtectedRoute';
 import { Layout } from '../components/layout/Layout';
@@ -30,10 +31,21 @@ function ScrollToTop() {
 }
 
 function DemoRoute() {
-  const { enableDemoMode } = useAuth();
+  const { enableDemoMode, mode } = useAuth();
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    enableDemoMode();
-  }, [enableDemoMode]);
+    enableDemoMode().finally(() => setLoading(false));
+  }, []);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#101828]">
+        <div className="flex flex-col items-center gap-4 text-white">
+          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-[#9CA3AF]">Loading demo workspace...</p>
+        </div>
+      </div>
+    );
+  }
   return <Navigate to="/app" replace />;
 }
 

@@ -6,8 +6,9 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('zoqel_token');
-  if (token && config.headers) {
+  // Prefer demo token when in demo mode, fall back to regular auth token
+  const token = localStorage.getItem('zoqel_token') || localStorage.getItem('zoqel_demo_token');
+  if (token && token !== 'offline-demo' && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -18,14 +19,18 @@ apiClient.interceptors.response.use(r => {
     return Promise.reject(new Error('Received HTML instead of JSON. Check API URL.'));
   }
   return r;
-}, err => { 
+}, err => {
   if (err.response?.status === 401) {
-    localStorage.removeItem('zoqel_user');
-    localStorage.removeItem('zoqel_token');
-    window.location.href = '/login';
+    const isDemoMode = !!localStorage.getItem('zoqel_demo_token');
+    if (!isDemoMode) {
+      // Only redirect to login for real authenticated sessions
+      localStorage.removeItem('zoqel_user');
+      localStorage.removeItem('zoqel_token');
+      window.location.href = '/login';
+    }
   }
-  console.warn('[API]', err.message); 
-  return Promise.reject(err); 
+  console.warn('[API]', err.message);
+  return Promise.reject(err);
 });
 
 export default apiClient;
