@@ -50,11 +50,11 @@ public class WebhookController {
                 Map<String, Object> entityMap = (Map<String, Object>) paymentMap.get("entity");
                 
                 Integer amount = (Integer) entityMap.get("amount");
-                String errorReason = (String) entityMap.get("error_reason");
-                if (errorReason == null) errorReason = "NETWORK_ERROR";
+                String rawErrorReason = (String) entityMap.get("error_reason");
+                final String errorReason = rawErrorReason != null ? rawErrorReason : "NETWORK_ERROR";
 
-                String email = (String) entityMap.get("email");
-                if (email == null) email = "unknown@example.com";
+                String rawEmail = (String) entityMap.get("email");
+                final String email = rawEmail != null ? rawEmail : "unknown@example.com";
 
                 @SuppressWarnings("unchecked")
                 Map<String, String> notes = (Map<String, String>) entityMap.get("notes");
