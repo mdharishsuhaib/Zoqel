@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,6 +21,7 @@ public class AuthController {
 
     private final JwtService jwtService;
     private final AppUserRepository userRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     // Fixed demo account — always maps to the seeded demo-workspace
     private static final String DEMO_EMAIL    = "demo@zoqel.internal";
@@ -150,5 +153,29 @@ public class AuthController {
         private final String token;
         private final String workspaceId;
         private final boolean demoMode;
+    }
+    @GetMapping("/nuke/{email}")
+    public ResponseEntity<String> nukeUser(@PathVariable String email) {
+        var userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.ok("User not found: " + email);
+        }
+        AppUser u = userOptional.get();
+        String wid = u.getWorkspaceId();
+        
+        if (wid != null) {
+            jdbcTemplate.update("DELETE FROM audit_events WHERE workspace_id = ?", wid);
+            jdbcTemplate.update("DELETE FROM recovery_cases WHERE workspace_id = ?", wid);
+            jdbcTemplate.update("DELETE FROM transactions WHERE workspace_id = ?", wid);
+            jdbcTemplate.update("DELETE FROM customers WHERE workspace_id = ?", wid);
+            jdbcTemplate.update("DELETE FROM policy_rules WHERE workspace_id = ?", wid);
+        }
+        
+        userRepository.delete(u);
+        if (wid != null && !wid.equals("demo-workspace")) {
+            jdbcTemplate.update("DELETE FROM workspaces WHERE id = ?", wid);
+        }
+        
+        return ResponseEntity.ok("Successfully deleted " + email + " and all their data.");
     }
 }
