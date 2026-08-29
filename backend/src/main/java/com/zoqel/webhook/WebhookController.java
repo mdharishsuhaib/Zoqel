@@ -4,6 +4,7 @@ import com.zoqel.customer.Customer;
 import com.zoqel.customer.CustomerRepository;
 import com.zoqel.customer.RiskTier;
 import com.zoqel.recovery.RecoveryCaseService;
+import com.zoqel.transaction.FailureReason;
 import com.zoqel.transaction.PaymentMethod;
 import com.zoqel.transaction.SimulateTransactionRequest;
 import com.zoqel.transaction.Transaction;
@@ -74,8 +75,16 @@ public class WebhookController {
 
                 SimulateTransactionRequest simReq = new SimulateTransactionRequest();
                 simReq.setCustomerId(customer.getId());
-                simReq.setAmountPaise(amount != null ? amount : 50000);
-                simReq.setFailureReason(errorReason);
+                simReq.setAmountPaise(amount != null ? amount.longValue() : 50000L);
+                
+                FailureReason reasonEnum;
+                try {
+                    reasonEnum = FailureReason.valueOf(errorReason);
+                } catch (IllegalArgumentException | NullPointerException e) {
+                    reasonEnum = FailureReason.UNKNOWN;
+                }
+                simReq.setFailureReason(reasonEnum);
+                
                 simReq.setPaymentMethod(PaymentMethod.UPI);
 
                 // Create the failed transaction
