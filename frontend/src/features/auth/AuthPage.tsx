@@ -154,9 +154,14 @@ export function AuthPage({ mode }: AuthPageProps) {
                   <div className="mt-1">
                     <input id="confirmPassword" name="confirmPassword" autoComplete="new-password" type="password" required value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="appearance-none block w-full px-3 py-2.5 border border-[#D0D5DD] rounded-lg shadow-sm placeholder-[#98A2B3] focus:outline-none focus:ring-[#2B84EA] focus:border-[#2B84EA] sm:text-sm transition-colors"
+                      className={`appearance-none block w-full px-3 py-2.5 border ${confirmPassword.length > 0 ? (password === confirmPassword ? 'border-green-500 focus:ring-green-500 focus:border-green-500' : 'border-red-500 focus:ring-red-500 focus:border-red-500') : 'border-[#D0D5DD] focus:ring-[#2B84EA] focus:border-[#2B84EA]'} rounded-lg shadow-sm placeholder-[#98A2B3] focus:outline-none sm:text-sm transition-colors`}
                       placeholder="••••••••"
                     />
+                    {confirmPassword.length > 0 && (
+                      <p className={`mt-1.5 text-xs ${password === confirmPassword ? 'text-green-600' : 'text-red-500'}`}>
+                        {password === confirmPassword ? '✓ Passwords match' : '✗ Passwords do not match'}
+                      </p>
+                    )}
                   </div>
                 </motion.div>
               )}
