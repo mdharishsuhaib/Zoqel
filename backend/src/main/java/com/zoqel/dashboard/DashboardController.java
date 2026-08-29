@@ -66,6 +66,47 @@ public class DashboardController {
                 .ignoredCases(ignoredCases)
                 .build();
     }
+    @GetMapping("/chart")
+    public List<java.util.Map<String, Object>> getChartData() {
+        String wid = currentUserService.getCurrentWorkspaceId();
+        List<com.zoqel.transaction.Transaction> txs = transactionRepository.findByWorkspaceId(wid);
+        
+        java.util.Map<String, java.util.Map<String, Long>> dailyData = new java.util.TreeMap<>();
+        java.time.LocalDate today = java.time.LocalDate.now();
+        
+        for (int i = 29; i >= 0; i--) {
+            String d = today.minusDays(i).format(java.time.format.DateTimeFormatter.ofPattern("MMM d"));
+            java.util.Map<String, Long> metrics = new java.util.HashMap<>();
+            metrics.put("atRisk", 0L);
+            metrics.put("recoverable", 0L);
+            metrics.put("recovered", 0L);
+            dailyData.put(d, metrics);
+        }
+        
+        for (com.zoqel.transaction.Transaction t : txs) {
+            String d = t.getCreatedAt().toLocalDate().format(java.time.format.DateTimeFormatter.ofPattern("MMM d"));
+            if (dailyData.containsKey(d)) {
+                java.util.Map<String, Long> metrics = dailyData.get(d);
+                long amount = t.getAmountPaise() / 100;
+                
+                if (t.getStatus() == com.zoqel.transaction.TransactionStatus.RECOVERED) {
+                    metrics.put("recovered", metrics.get("recovered") + amount);
+                } else if (t.getStatus() == com.zoqel.transaction.TransactionStatus.FAILED || t.getStatus() == com.zoqel.transaction.TransactionStatus.ESCALATED || t.getStatus() == com.zoqel.transaction.TransactionStatus.IGNORED) {
+                    metrics.put("atRisk", metrics.get("atRisk") + amount);
+                    metrics.put("recoverable", metrics.get("recoverable") + (long)(amount * 0.7));
+                }
+            }
+        }
+        
+        List<java.util.Map<String, Object>> result = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<String, java.util.Map<String, Long>> entry : dailyData.entrySet()) {
+            java.util.Map<String, Object> point = new java.util.HashMap<>();
+            point.put("date", entry.getKey());
+            point.put("atRisk", entry.getValue().get("atRisk"));
+            point.put("recoverable", entry.getValue().get("recoverable"));
+            point.put("recovered", entry.getValue().get("recovered"));
+            result.add(point);
+        }
+        return result;
+    }
 }
-
-

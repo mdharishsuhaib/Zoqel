@@ -53,7 +53,14 @@ export function Topbar() {
     navigate('/');
   };
 
-  const initials = mode === 'DEMO' ? 'DM' : user?.fullName ? user.fullName.substring(0, 2).toUpperCase() : 'DE';
+  const getInitials = (name?: string) => {
+    if (mode === 'DEMO') return 'DM';
+    if (!name) return 'DE';
+    const words = name.trim().split(/\s+/);
+    return words.map(w => w[0].toUpperCase()).join('').substring(0, 3);
+  };
+
+  const initials = getInitials(user?.fullName);
   const displayName = mode === 'DEMO' ? 'Demo Merchant' : user?.fullName || 'Zoqel User';
   const displayEmail = mode === 'DEMO' ? 'demo@zoqel.ai' : user?.email || '';
 

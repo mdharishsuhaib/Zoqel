@@ -1,10 +1,37 @@
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { PageHeader } from '../../components/ui/PageHeader';
-import { MOCK_TRANSACTIONS, MOCK_CUSTOMER_HISTORY } from '../../data/transactions';
+import { getCustomers, getCustomerHistory } from '../../services/customerService';
 import { formatLakhsSymbol } from '../../utils/format';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 
+function CustomerRow({ c }: { c: any }) {
+  const { data: history } = useQuery({ 
+    queryKey: ['customerHistory', c.id], 
+    queryFn: () => getCustomerHistory(c.id) 
+  });
+  return (
+    <tr className="hover:bg-[#F9FAFB]">
+      <td className="px-6 py-4">
+        <div className="font-medium text-[#101828]">{c.name}</div>
+        <div className="text-xs text-[#667085]">{c.email}</div>
+      </td>
+      <td className="px-6 py-4"><StatusBadge status={c.riskTier} /></td>
+      <td className="px-6 py-4 text-[#475467] font-medium">{formatLakhsSymbol(history?.totalAmountPaise || 0)}</td>
+      <td className="px-6 py-4 text-[#475467]">{((history?.successfulPayments || 0) + (history?.failedPayments || 0))}</td>
+      <td className="px-6 py-4 text-[#475467]">{((history?.successRate || 0) * 100).toFixed(0)}%</td>
+      <td className="px-6 py-4 text-right text-danger font-medium">{history?.failedPayments || 0}</td>
+    </tr>
+  );
+}
+
 export function CustomersPage() {
-  const uniqueCustomers = Array.from(new Map(MOCK_TRANSACTIONS.map(t => [t.customer.id, t.customer])).values());
+  const { data: customersData, isLoading } = useQuery({ 
+    queryKey: ['customers'], 
+    queryFn: () => getCustomers(0, 50) 
+  });
+  
+  const customers = customersData?.content || [];
 
   return (
     <div className="space-y-6">
@@ -24,22 +51,13 @@ export function CustomersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E4E7EC]">
-              {uniqueCustomers.map(c => {
-                const history = MOCK_CUSTOMER_HISTORY[c.id];
-                return (
-                  <tr key={c.id} className="hover:bg-[#F9FAFB]">
-                    <td className="px-6 py-4">
-                      <div className="font-medium text-[#101828]">{c.name}</div>
-                      <div className="text-xs text-[#667085]">{c.email}</div>
-                    </td>
-                    <td className="px-6 py-4"><StatusBadge status={c.riskTier} /></td>
-                    <td className="px-6 py-4 text-[#475467] font-medium">{formatLakhsSymbol(c.lifetimeValuePaise)}</td>
-                    <td className="px-6 py-4 text-[#475467]">{history?.successfulPayments + history?.failedPayments || 0}</td>
-                    <td className="px-6 py-4 text-[#475467]">{((history?.successRate || 0) * 100).toFixed(0)}%</td>
-                    <td className="px-6 py-4 text-right text-danger font-medium">{history?.failedPayments || 0}</td>
-                  </tr>
-                );
-              })}
+              {isLoading ? (
+                <tr><td colSpan={6} className="px-6 py-8 text-center text-[#667085]">Loading customers...</td></tr>
+              ) : customers.length === 0 ? (
+                <tr><td colSpan={6} className="px-6 py-8 text-center text-[#667085]">No customers found</td></tr>
+              ) : (
+                customers.map(c => <CustomerRow key={c.id} c={c} />)
+              )}
             </tbody>
           </table>
         </div>

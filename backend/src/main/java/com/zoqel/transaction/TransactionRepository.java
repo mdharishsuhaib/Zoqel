@@ -16,6 +16,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, String
     List<Transaction> findByCustomerIdAndWorkspaceId(String customerId, String workspaceId);
     List<Transaction> findByStatusAndWorkspaceId(TransactionStatus status, String workspaceId);
     Page<Transaction> findByWorkspaceId(String workspaceId, Pageable pageable);
+    List<Transaction> findByWorkspaceId(String workspaceId);
     long countByWorkspaceId(String workspaceId);
 
     @Query("SELECT COUNT(t) FROM Transaction t WHERE t.status = :status AND t.workspaceId = :workspaceId")

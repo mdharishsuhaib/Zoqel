@@ -2,13 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { getDashboardMetrics, getChartData } from '../../services/recoveryService';
+import { getDashboardMetrics, getChartData, getTransactions } from '../../services/recoveryService';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { MetricCardSkeleton } from '../../components/ui/LoadingSkeleton';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { formatLakhsSymbol } from '../../utils/format';
-import { MOCK_TRANSACTIONS } from '../../data/transactions';
-import { MOCK_AUDIT_EVENTS } from '../../data/audit';
+import { getAuditEvents } from '../../services/auditService';
+
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { PipelineVisual } from '../../components/recovery/PipelineVisual';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,6 +18,9 @@ export function OverviewPage() {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const { data: metrics, isLoading: isMetricsLoading } = useQuery({ queryKey: ['metrics'], queryFn: getDashboardMetrics });
   const { data: chartData, isLoading: isChartLoading } = useQuery({ queryKey: ['chart'], queryFn: getChartData });
+  const { data: txData } = useQuery({ queryKey: ['transactions', 0, 5], queryFn: () => getTransactions(0, 5) });
+  const { data: auditEvents } = useQuery({ queryKey: ['auditEvents'], queryFn: () => getAuditEvents() });
+  const recentTx = txData?.content || [];
 
   const filteredChartData = useMemo(() => {
     if (!chartData) return [];
@@ -98,7 +101,7 @@ export function OverviewPage() {
                 </tr>
               </thead>
               <tbody>
-                {MOCK_TRANSACTIONS.slice(0, 5).map(t => (
+                {recentTx.map(t => (
                   <React.Fragment key={t.id}>
                     <tr 
                       onClick={() => setExpandedRow(expandedRow === t.id ? null : t.id)}
@@ -140,7 +143,7 @@ export function OverviewPage() {
             <h2 className="text-lg font-semibold">Zoqel Intelligence</h2>
           </div>
           <div className="space-y-4">
-            {MOCK_AUDIT_EVENTS.filter(e => e.transactionId === 'TXN-91823').slice(-3).map(e => (
+            {(auditEvents || []).filter(e => e.transactionId === 'TXN-91823').slice(-3).map((e: any) => (
               <div key={e.id} className="border-l-2 border-[#374151] pl-4 py-1">
                 <div className="text-xs text-[#9CA3AF] mb-1 font-mono">{e.actor}</div>
                 <div className="text-sm">{e.eventDetail}</div>
@@ -152,3 +155,5 @@ export function OverviewPage() {
     </div>
   );
 }
+
+

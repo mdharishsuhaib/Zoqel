@@ -9,7 +9,8 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
 }
 
 export async function getChartData(): Promise<ChartDataPoint[]> {
-  return MOCK_CHART_DATA;
+  try { return (await apiClient.get<ChartDataPoint[]>('/dashboard/chart')).data; }
+  catch { return MOCK_CHART_DATA; }
 }
 
 export async function getTransactions(page = 0, size = 20, status?: string): Promise<PagedResponse<Transaction>> {

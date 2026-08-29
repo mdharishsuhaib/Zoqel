@@ -1,7 +1,8 @@
 import { Activity, Shield, Brain, Zap, Key, Database, Globe, Lock } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
-import { MOCK_AUDIT_EVENTS } from '../../data/audit';
 import { formatTime } from '../../utils/format';
+import { useQuery } from '@tanstack/react-query';
+import { getAuditEvents } from '../../services/auditService';
 
 const TOOLS = [
   { id: 't1', name: 'Risk Scoring Engine', description: 'Calculates real-time risk scores for incoming transactions.', icon: Shield, status: 'active' },
@@ -24,10 +25,17 @@ function ActorBadge({ actor }: { actor: string }) {
     'Zoqel': 'bg-[#111827] text-white',
   };
   const cl = colors[actor] || 'bg-[#667085] text-white';
-  return <span className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase ${cl}`}>{actor}</span>;
+  return <span className={\px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase \\}>{actor}</span>;
 }
 
 export function AgentPage() {
+  const { data: rawEvents, isLoading } = useQuery({ 
+    queryKey: ['auditEvents'], 
+    queryFn: () => getAuditEvents() 
+  });
+  
+  const events = Array.isArray(rawEvents) ? rawEvents : [];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
@@ -61,47 +69,41 @@ export function AgentPage() {
             </div>
           </div>
           <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-[#F9FAFB]">
-            {[...MOCK_AUDIT_EVENTS].reverse().map(evt => (
+            {isLoading ? (
+               <div className="text-center text-[#667085] py-8">Loading agent feed...</div>
+            ) : events.length === 0 ? (
+               <div className="text-center text-[#667085] py-8">Waiting for AI agent activity...</div>
+            ) : [...events].reverse().map(evt => (
               <div key={evt.id} className="bg-white p-4 rounded-lg border border-[#E4E7EC] shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
                     <ActorBadge actor={evt.actor} />
                     <span className="text-xs font-semibold text-[#101828]">{evt.eventType}</span>
                   </div>
-                  <span className="text-xs text-[#98A2B3]">{formatTime(evt.occurredAt)}</span>
+                  <span className="text-[11px] font-medium text-[#667085]">{formatTime(evt.timestamp)}</span>
                 </div>
-                <div className="text-sm text-[#475467] font-mono leading-relaxed">{evt.eventDetail}</div>
-                <div className="mt-3 pt-3 border-t border-[#F2F4F7] text-[11px] text-[#98A2B3] flex items-center gap-4">
-                  <span>TXN: <span className="font-medium text-[#667085]">{evt.transactionId}</span></span>
-                  <span>ID: <span className="font-mono">{evt.id}</span></span>
-                </div>
+                <div className="text-sm text-[#475467]">{evt.eventDetail}</div>
+                <div className="mt-2 text-[10px] font-mono text-[#9CA3AF]">TxID: {evt.transactionId}</div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="col-span-2 space-y-6">
-          <div className="bg-white rounded-xl border border-[#E4E7EC] shadow-card">
-            <div className="p-5 border-b border-[#E4E7EC]">
-              <h2 className="text-[15px] font-semibold text-[#101828]">Tool Inventory</h2>
-            </div>
-            <div className="p-2">
-              {TOOLS.map(t => (
-                <div key={t.id} className="flex gap-4 p-3 hover:bg-[#F9FAFB] rounded-lg transition-colors">
-                  <div className="w-10 h-10 rounded-lg bg-[#F2F4F7] flex items-center justify-center shrink-0">
-                    <t.icon size={20} className="text-[#475467]" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm font-semibold text-[#101828]">{t.name}</h3>
-                      <span className="w-1.5 h-1.5 rounded-full bg-success" title="Active"></span>
-                    </div>
-                    <p className="text-xs text-[#667085] leading-relaxed">{t.description}</p>
-                  </div>
+        <div className="col-span-2 space-y-4">
+          {TOOLS.map(t => (
+            <div key={t.id} className="bg-white p-4 rounded-xl border border-[#E4E7EC] shadow-sm flex gap-4 items-start">
+              <div className="w-10 h-10 rounded-lg bg-[#F9FAFB] border border-[#E4E7EC] flex items-center justify-center shrink-0">
+                <t.icon size={20} className="text-[#667085]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="text-sm font-semibold text-[#101828] truncate">{t.name}</h3>
+                  <span className="w-2 h-2 rounded-full bg-success shrink-0" title="Active" />
                 </div>
-              ))}
+                <p className="text-xs text-[#667085] leading-relaxed">{t.description}</p>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
