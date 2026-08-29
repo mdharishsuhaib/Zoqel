@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import apiClient from '../../services/apiClient';
@@ -23,6 +23,11 @@ export function AuthPage({ mode }: AuthPageProps) {
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Clear errors when switching between login and signup
+  useEffect(() => {
+    setError('');
+  }, [isLogin]);
 
   const isPasswordValid = (pw: string) => {
     return (
