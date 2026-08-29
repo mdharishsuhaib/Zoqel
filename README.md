@@ -20,6 +20,7 @@
 ## ⚡ The Problem vs. The Zoqel Solution
 
 **The Problem:** Traditional payment recovery ("dunning") relies on rigid, rule-based retry schedules and spamming customers with emails. It's blind to context and alienates users.
+
 **The Solution:** Zoqel introduces an intelligent, bounded AI Agent that reasons about *why* a payment failed and executes the optimal recovery path. 
 
 Every money action in Zoqel is **explainable, bounded, and gated.**
