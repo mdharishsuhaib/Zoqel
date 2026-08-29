@@ -128,19 +128,19 @@ from scikit-learn, not a neural network or LLM-based classifier.
 
 ---
 
-## 7. OpenRouter as LLM Provider
-
-**Decision**: Use OpenRouter as the LLM API provider with GPT-4o as the target model.
-
-**Rationale**:
-- OpenRouter provides a unified API that is OpenAI-compatible
-- The model can be switched by changing a single environment variable (`OPENROUTER_MODEL`)
-- GPT-4o has strong instruction-following for structured JSON output
-- The `AgentGateway` interface means swapping providers requires only a new implementation
-
-**Fallback**: If OpenRouter is unavailable (no API key, network error, rate limit),
-`OpenRouterAgentGateway` returns a deterministic fallback decision based on failure reason
-and recovery probability. Zoqel continues to function safely without the LLM.
+## 7. Ollama as LLM Provider
+  
+  **Decision**: Use Ollama Cloud API as the LLM API provider with `gpt-oss:120b-cloud` as the target model.
+  
+  **Rationale**:
+  - Ollama provides a robust API for large models.
+  - The model can be switched by changing the environment variable.
+  - `gpt-oss:120b-cloud` has strong instruction-following for structured JSON output.
+  - The `AgentGateway` interface means swapping providers requires only a new implementation.
+  
+  **Fallback**: If the Ollama API is unavailable (no API key, network error, rate limit),
+  `OllamaAgentGateway` returns a deterministic fallback decision based on failure reason
+  and recovery probability. Zoqel continues to function safely without the LLM.
 
 ---
 

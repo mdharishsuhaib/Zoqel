@@ -30,15 +30,15 @@ Every money action is explainable, bounded, and gated. No recovery fires without
 
 | Metric | Value |
 |---|---|
-| Revenue at Risk | ₹11.40 crore |
-| Truly Recoverable | ₹160.16 lakh |
-| **Revenue Recovered** | **₹153.97 lakh** |
+| Revenue at Risk | ₹1.40 crore |
+| Truly Recoverable | ₹60.16 lakh |
+| **Revenue Recovered** | **₹53.97 lakh** |
 | Recovery Rate | **89.7%** |
 | Precision | 0.736 |
 | Recall | 0.907 |
 | F1 | 0.813 |
 | AUC-ROC | 0.876 |
-| False Intervention Cost | ₹117.18 lakh (reported, not hidden) |
+| False Intervention Cost | ₹17.18 lakh (reported, not hidden) |
 
 **Per-failure-reason breakdown** — the model's zero recall on EXPIRED_CARD, INSUFFICIENT_FUNDS, REPEATED_FAILURE, and DUPLICATE_ATTEMPT is intentional: these classes have near-zero true recovery probability (0–14% by domain design). Predicting "don't intervene" on structurally unrecoverable failures is correct behaviour, not a miss. Full breakdown in [`evaluation/report.txt`](evaluation/report.txt).
 
@@ -88,7 +88,7 @@ The repository includes extensive integration tests that run directly against th
 | Frontend | React (Vite), TypeScript, Tailwind CSS, Framer Motion |
 | Backend | Java 21, Spring Boot 3.3, Spring Data JPA, Flyway |
 | Database | PostgreSQL 15 (Supabase) |
-| AI Layer | OpenAI API (gpt-4o) / OpenRouter |
+| AI Layer | Ollama Cloud API (gpt-oss:120b-cloud) |
 | ML Pipeline | Python, scikit-learn, joblib (see `ml/`) |
 | Frontend Deploy | Cloudflare Workers (Static Assets) |
 | Backend Deploy | Render |
