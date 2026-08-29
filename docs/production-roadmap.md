@@ -1,4 +1,4 @@
-﻿# Zoqel: Production Roadmap
+# Zoqel: Production Roadmap
 
 This document outlines the architectural roadmap for transitioning Zoqel from a stable **Hackathon Prototype (Track 03 focus)** to an enterprise-grade, production-ready SaaS platform. 
 
@@ -33,7 +33,7 @@ Our primary objective for the Razorpay Buildathon was proving the viability of a
 ## Phase B — Security Hardening
 * 🟡 **Rate Limiting (Redis):** Implement strict throttling on login and OTP generation endpoints to prevent brute forcing.
 * 🟡 **Session Invalidation:** Revoke active JWTs upon password reset or security-critical events.
-* 🟡 **Cryptographic Webhook Validation:** Enforce HMAC signature verification on all incoming Razorpay webhooks (bypassed in Phase 0 for demo simplicity).
+* 🟡 **Cryptographic Webhook Validation:** Enforce HMAC signature verification on all production Razorpay webhook endpoints. Phase 0 uses the controlled demo/simulator event path for hackathon evaluation and does not represent production payment-webhook security.
 * 🟡 **Authentication Audit Logs:** Expand the existing pipeline audit trail to track LOGIN_FAILED, PASSWORD_CHANGED, etc.
 
 ---
