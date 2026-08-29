@@ -71,7 +71,7 @@ See [`docs/failure-analysis.md`](docs/failure-analysis.md) for 6 real bugs docum
 
 ## Live Demo
 
-- **Frontend**: https://zoqel.pages.dev
+- **Frontend**: https://zoqel.mdharishsuhaib.workers.dev
 - **Backend API**: https://zoqel-8ly3.onrender.com/api
 - **Demo entry**: Navigate to `/demo` — the app fetches a real backend token scoped to the demo workspace. No signup required.
 
@@ -88,7 +88,7 @@ See [`docs/failure-analysis.md`](docs/failure-analysis.md) for 6 real bugs docum
 | Database | PostgreSQL 15 (Supabase) |
 | AI Layer | Ollama Cloud API (gpt-oss:120b-cloud) |
 | ML Pipeline | Python, scikit-learn, joblib (see `ml/`) |
-| Frontend Deploy | Cloudflare Pages |
+| Frontend Deploy | Cloudflare Workers (Static Assets) |
 | Backend Deploy | Render |
 
 ---

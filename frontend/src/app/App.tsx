@@ -58,9 +58,21 @@ function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+// Silently wake the Render backend as soon as the app loads.
+// Render free-tier cold-starts take ~90-160s. By pinging /api/auth/demo
+// the moment any page loads, we reduce cold-start delay before a judge clicks "Try Demo".
+function BackendWarmup() {
+  useEffect(() => {
+    const base = import.meta.env.VITE_API_URL || 'https://zoqel-8ly3.onrender.com';
+    fetch(`${base}/api/auth/demo`, { method: 'POST', keepalive: true }).catch(() => {});
+  }, []);
+  return null;
+}
+
 export function App() {
   return (
     <AuthProvider>
+      <BackendWarmup />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<LandingPage />} />
