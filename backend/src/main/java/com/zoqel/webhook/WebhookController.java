@@ -58,7 +58,17 @@ public class WebhookController {
 
                 @SuppressWarnings("unchecked")
                 Map<String, String> notes = (Map<String, String>) entityMap.get("notes");
-                String workspaceId = (notes != null && notes.containsKey("workspaceId")) ? notes.get("workspaceId") : "demo-workspace";
+                if (notes == null || !notes.containsKey("workspaceId")) {
+                    logger.warning("Rejected webhook: missing workspaceId in notes");
+                    return ResponseEntity.badRequest().body("Missing workspaceId in notes");
+                }
+                String workspaceId = notes.get("workspaceId");
+
+                // Protect the demo workspace from unauthenticated webhook flooding
+                if ("demo-workspace".equals(workspaceId)) {
+                    logger.warning("Rejected webhook: targeted demo-workspace");
+                    return ResponseEntity.status(403).body("Webhooks are disabled for the demo workspace. Use the simulator UI.");
+                }
 
                 // Find or create customer
                 Customer customer = customerRepository.findByEmailAndWorkspaceId(email, workspaceId).orElseGet(() -> {
