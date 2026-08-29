@@ -27,34 +27,9 @@ export function OverviewPage() {
   return (
     <div className="space-y-6">
       <PageHeader 
-        title="Welcome back to your autonomous recovery engine." 
-        subtitle="Monitor your live recovery queue, inspect AI decisions, and review your audit trail. Zoqel is working in the background so you don't have to." 
+        title="Overview" 
+        subtitle="Closing the loop: from detecting payment degrades and abandoned checkouts, to diagnosing failed subscriptions and recovering overdue receivables." 
       />
-
-      <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-5 flex flex-wrap items-center justify-between shadow-sm gap-4">
-        <div className="flex items-center gap-3 min-w-fit">
-          <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
-          <div>
-            <p className="text-[11px] text-[#64748B] font-bold uppercase tracking-wider mb-0.5">System Status</p>
-            <p className="text-sm font-semibold text-[#0F172A]">All Systems Nominal</p>
-          </div>
-        </div>
-        <div className="hidden md:block h-8 w-px bg-[#E2E8F0]"></div>
-        <div className="min-w-fit">
-          <p className="text-[11px] text-[#64748B] font-bold uppercase tracking-wider mb-0.5">AI Decision Engine</p>
-          <p className="text-sm font-semibold text-[#0F172A] flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Online</p>
-        </div>
-        <div className="hidden md:block h-8 w-px bg-[#E2E8F0]"></div>
-        <div className="min-w-fit">
-          <p className="text-[11px] text-[#64748B] font-bold uppercase tracking-wider mb-0.5">Policy Bounds</p>
-          <p className="text-sm font-semibold text-[#0F172A] flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-violet-500"></span>Enforcing</p>
-        </div>
-        <div className="hidden md:block h-8 w-px bg-[#E2E8F0]"></div>
-        <div className="min-w-fit">
-          <p className="text-[11px] text-[#64748B] font-bold uppercase tracking-wider mb-0.5">Recovery Queue</p>
-          <p className="text-sm font-semibold text-[#0F172A] flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Processing</p>
-        </div>
-      </div>
       
       <div className="grid grid-cols-4 gap-4">
         {isMetricsLoading || !metrics ? (
