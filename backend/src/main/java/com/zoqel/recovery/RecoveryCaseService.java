@@ -40,16 +40,25 @@ public class RecoveryCaseService {
         Transaction t = transactionRepository.findByIdAndWorkspaceId(transactionId, workspaceId)
                 .orElseThrow(() -> new NotFoundException("Transaction not found"));
 
+        // Check idempotency FIRST — if a closed case already exists, return it without re-processing.
+        // This must come before the transaction status check because after a successful recovery
+        // the transaction status changes to RECOVERED, and a naive second call would throw 500.
+        RecoveryCase existingRc = recoveryCaseRepository.findByTransactionIdAndWorkspaceId(transactionId, workspaceId)
+                .orElse(null);
+        if (existingRc != null && (
+                existingRc.getStatus() == RecoveryCaseStatus.RECOVERED ||
+                existingRc.getStatus() == RecoveryCaseStatus.FAILED ||
+                existingRc.getStatus() == RecoveryCaseStatus.ESCALATED ||
+                existingRc.getStatus() == RecoveryCaseStatus.IGNORED)) {
+            return existingRc;
+        }
+
         if (t.getStatus() != TransactionStatus.FAILED) {
             throw new IllegalStateException("Can only process FAILED transactions");
         }
 
-        RecoveryCase initialRc = recoveryCaseRepository.findByTransactionIdAndWorkspaceId(transactionId, workspaceId)
-                .orElseGet(() -> RecoveryCase.builder().transactionId(transactionId).workspaceId(workspaceId).build());
-
-        if (initialRc.getStatus() == RecoveryCaseStatus.RECOVERED || initialRc.getStatus() == RecoveryCaseStatus.FAILED || initialRc.getStatus() == RecoveryCaseStatus.ESCALATED || initialRc.getStatus() == RecoveryCaseStatus.IGNORED) {
-            return initialRc;
-        }
+        RecoveryCase initialRc = (existingRc != null) ? existingRc :
+                RecoveryCase.builder().transactionId(transactionId).workspaceId(workspaceId).build();
 
         initialRc.setStatus(RecoveryCaseStatus.IN_PROGRESS);
         final RecoveryCase rc = recoveryCaseRepository.save(initialRc);
