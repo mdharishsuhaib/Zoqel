@@ -88,7 +88,7 @@ The system prompt said "respond with ONLY a JSON object" but GPT-4o occasionally
 added markdown formatting despite this instruction.
 
 **Fix**  
-Added a cleaning step in `OpenRouterAgentGateway.recommend()` before parsing:
+Added a cleaning step in `OllamaAgentGateway.recommend()` before parsing:
 ```java
 String content = rawContent.trim();
 // Strip markdown code fences if present

@@ -36,7 +36,7 @@ measures the monetary outcome.
 │  └──────────────┘        │  │             │               │ │  │
 │                          │  │  ┌──────────▼───────────┐  │ │  │
 │  ┌──────────────┐        │  │  │  Zoqel AI Agent      │  │ │  │
-│  │  OpenRouter  │◄───────┤  │  │  (GPT-4o via OpenR.) │  │ │  │
+│  │  Ollama  │◄───────┤  │  │  (Ollama API        ) │  │ │  │
 │  │  API (LLM)   │  HTTPS │  │  └──────────┬───────────┘  │ │  │
 │  └──────────────┘        │  │             │ recommendation │ │  │
 │                          │  │  ┌──────────▼───────────┐  │ │  │
@@ -90,7 +90,7 @@ measures the monetary outcome.
    │  b) Compute recovery probability via RiskDetector       │
    │     → Audit: PROBABILITY_CALCULATED                     │
    │                                                         │
-   │  c) Call AI Agent (OpenRouter/GPT-4o)                   │
+   │  c) Call AI Agent (Ollama/gpt-oss:120b-cloud)                   │
    │     Input: structured AgentContext JSON                  │
    │     Output: { decision, reason, confidence,             │
    │              requires_human }                            │
@@ -180,7 +180,7 @@ com.zoqel/
 ├── ZoqelApplication.java
 ├── config/
 │   ├── WebConfig.java          (CORS)
-│   └── OpenRouterConfig.java   (LLM client bean)
+│   └── OllamaConfig.java   (LLM client bean)
 ├── customer/
 │   ├── Customer.java           (JPA entity)
 │   ├── CustomerRepository.java
@@ -224,7 +224,7 @@ com.zoqel/
 │   ├── AgentDecision.java      (DTO)
 │   ├── AgentContext.java       (DTO)
 │   ├── AgentGateway.java       (interface)
-│   ├── OpenRouterAgentGateway.java (concrete impl)
+│   ├── OllamaAgentGateway.java (concrete impl)
 │   ├── AgentService.java
 │   └── AgentController.java
 └── dashboard/
@@ -273,7 +273,7 @@ com.zoqel/
 | Styling | Tailwind CSS 3 | Utility-first, no CSS files needed |
 | Charts | Recharts | React-native charting |
 | ML | scikit-learn + Python 3.11 | Fast, interpretable, no GPU needed |
-| LLM | GPT-4o via OpenRouter | Strong reasoning, OpenAI-compatible API |
+| LLM | gpt-oss:120b-cloud via Ollama | Strong reasoning, OpenAI-compatible API |
 | Container | Docker + Compose | Reproducible full-stack deployment |
 
 ---
@@ -288,4 +288,4 @@ com.zoqel/
 
 4. **Policy engine is the gatekeeper**: No payment action (retry, escalate, notify) can bypass the policy engine. The LLM's recommendation is just a recommendation.
 
-5. **Fallback on LLM failure**: If OpenRouter is unavailable, `OpenRouterAgentGateway` returns a safe deterministic fallback based on failure reason and recovery probability. The system continues to function.
+5. **Fallback on LLM failure**: If Ollama is unavailable, `OllamaAgentGateway` returns a safe deterministic fallback based on failure reason and recovery probability. The system continues to function.
