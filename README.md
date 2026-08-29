@@ -48,11 +48,12 @@ We know that giving an AI financial control is risky. Zoqel was built with a "Sa
 
 1. **Policy-Bounded Guardrails (Track 01 Alignment):** The AI cannot bypass the merchant's rules. If the AI recommends an auto-retry of ₹10,000, but the merchant's Policy Engine caps auto-retries at ₹5,000, the action is hard-blocked and escalated to a human.
 2. **Demo Mode Isolation (Track 02 Alignment):** Our Demo Mode isn't just frontend smoke. `DemoGuardFilter` enforces strict write-blocking at the HTTP layer. Unauthenticated webhooks targeting the demo workspace are rejected (`403 Forbidden`). 19/19 cross-tenant isolation tests pass on production.
-3. **Webhook Security:** Webhooks strictly require valid Workspace UUIDs (`400 Bad Request` if missing). *(Note: HMAC signature validation is bypassed for the hackathon, but the blast radius is structurally confined to the intelligence pipeline).*
+3. **Full-Stack Authentication Security:** Strict, multi-layered validation (BCrypt password hashing, rigorous length/complexity checks, and legal policy acceptance) enforced simultaneously on both the React frontend and Spring Boot backend. 
+4. **Webhook Security:** Webhooks strictly require valid Workspace UUIDs (`400 Bad Request` if missing). *(Note: HMAC signature validation is planned for production Phase B, but Phase 0 uses a controlled simulator event path).*
 
 ---
 
-## 📈 Measured Results (Held-Out Test Set)
+## 📊 Measured Results (Held-Out Test Set)
 
 Zoqel’s Machine Learning layer was evaluated against a held-out test set of 10,000 transactions (never seen during training). The numbers speak for themselves:
 
@@ -62,7 +63,7 @@ Zoqel’s Machine Learning layer was evaluated against a held-out test set of 10
 | **Truly Recoverable** | **₹60.16 lakh** |
 | **Revenue Recovered (By Zoqel)** | **₹53.97 lakh** |
 | **Recovery Rate** | **89.7%** |
-| False Intervention Cost | ₹17.18 lakh |
+| False Intervention Cost | ₹7.18 lakh |
 
 *The model correctly avoids intervening on structurally unrecoverable failures (e.g., EXPIRED_CARD, INSUFFICIENT_FUNDS), resulting in highly efficient recovery without burning merchant resources.* Full breakdown available in `evaluation/report.txt`.
 
