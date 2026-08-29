@@ -42,6 +42,9 @@ function DemoRoute() {
         <div className="flex flex-col items-center gap-4 text-white">
           <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-[#9CA3AF]">Loading demo workspace...</p>
+          <p className="text-xs text-[#6B7280] max-w-xs text-center mt-2">
+            Please allow up to 60 seconds for the free-tier server to wake up from inactivity.
+          </p>
         </div>
       </div>
     );

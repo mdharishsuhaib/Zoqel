@@ -75,7 +75,21 @@ export function AuthPage({ mode }: AuthPageProps) {
         navigate('/app');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || err.response?.data || 'Authentication failed. Please check your credentials and ensure the backend is running.');
+      let msg = 'Authentication failed. Please check your credentials.';
+      if (err.response?.data) {
+        if (typeof err.response.data === 'string') {
+          msg = err.response.data;
+        } else if (err.response.data.message) {
+          msg = err.response.data.message;
+        } else if (err.response.data.error) {
+          msg = err.response.data.error;
+        } else {
+          msg = 'Invalid credentials or server error.';
+        }
+      } else if (err.message) {
+        msg = err.message;
+      }
+      setError(msg);
     } finally {
       setIsLoading(false);
     }
