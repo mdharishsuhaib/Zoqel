@@ -59,7 +59,30 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
         }
 
-        String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt(12));
+        // --- BACKEND VALIDATION RULES ---
+        if (!request.isTermsAccepted() || !request.isPrivacyAccepted()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please agree to the Terms of Service and Privacy Policy.");
+        }
+
+        String pw = request.getPassword();
+        if (pw == null || pw.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password is required");
+        }
+        if (!pw.equals(request.getConfirmPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords do not match.");
+        }
+        if (pw.length() < 8 || pw.length() > 128) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password must be between 8 and 128 characters");
+        }
+        if (pw.startsWith(" ") || pw.endsWith(" ")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password cannot contain leading or trailing spaces");
+        }
+        if (!pw.matches(".*[A-Z].*") || !pw.matches(".*[a-z].*") || !pw.matches(".*[0-9].*") || !pw.matches(".*[^A-Za-z0-9].*")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character");
+        }
+        // --------------------------------
+
+        String hashedPassword = BCrypt.hashpw(pw, BCrypt.gensalt(12));
 
         AppUser user = AppUser.builder()
                 .id(UUID.randomUUID().toString())
@@ -99,6 +122,9 @@ public class AuthController {
         private String fullName;
         private String email;
         private String password;
+        private String confirmPassword;
+        private boolean termsAccepted;
+        private boolean privacyAccepted;
     }
 
     @Data

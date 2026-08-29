@@ -27,6 +27,8 @@ export function AuthPage({ mode }: AuthPageProps) {
   const isPasswordValid = (pw: string) => {
     return (
       pw.length >= 8 &&
+      pw.length <= 128 &&
+      pw.trim() === pw &&
       /[A-Z]/.test(pw) &&
       /[a-z]/.test(pw) &&
       /[0-9]/.test(pw) &&
@@ -40,7 +42,7 @@ export function AuthPage({ mode }: AuthPageProps) {
     
     if (!isLogin) {
       if (!isPasswordValid(password)) {
-        setError("Password must be at least 8 characters and contain an uppercase letter, lowercase letter, number, and special character.");
+        setError("Password must be between 8-128 characters, contain uppercase, lowercase, number, special character, and no leading/trailing spaces.");
         return;
       }
       if (password !== confirmPassword) {
@@ -48,7 +50,7 @@ export function AuthPage({ mode }: AuthPageProps) {
         return;
       }
       if (!termsAccepted || !privacyAccepted) {
-        setError("You must accept the Terms of Service and Privacy Policy.");
+        setError("Please agree to the Terms of Service and Privacy Policy.");
         return;
       }
     }
@@ -61,7 +63,14 @@ export function AuthPage({ mode }: AuthPageProps) {
         login(response.data, response.data.token);
         navigate('/app');
       } else {
-        const response = await apiClient.post('/auth/register', { fullName, email, password });
+        const response = await apiClient.post('/auth/register', { 
+          fullName, 
+          email, 
+          password,
+          confirmPassword,
+          termsAccepted,
+          privacyAccepted 
+        });
         login(response.data, response.data.token);
         navigate('/app');
       }
