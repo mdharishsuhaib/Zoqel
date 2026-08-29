@@ -36,11 +36,11 @@ public class WorkspaceService {
 
         // Seed default policy rules for the new workspace
         policyRepository.saveAll(List.of(
-            new PolicyRule(UUID.randomUUID().toString(), ws.getId(), "max_auto_amount_paise", "500000", "Maximum transaction amount allowed for autonomous recovery"),
-            new PolicyRule(UUID.randomUUID().toString(), ws.getId(), "min_recovery_confidence", "0.75", "Minimum AI confidence required to execute recovery"),
-            new PolicyRule(UUID.randomUUID().toString(), ws.getId(), "max_retries_per_transaction", "3", "Maximum number of autonomous retry attempts per transaction"),
-            new PolicyRule(UUID.randomUUID().toString(), ws.getId(), "require_human_for_repeated_failure", "true", "Escalate if the same failure reason occurs consecutively"),
-            new PolicyRule(UUID.randomUUID().toString(), ws.getId(), "auto_recovery_enabled", "false", "Master switch for autonomous recovery actions")
+            PolicyRule.builder().workspaceId(ws.getId()).ruleKey("max_auto_amount_paise").ruleValue("500000").description("Maximum transaction amount allowed for autonomous recovery").build(),
+            PolicyRule.builder().workspaceId(ws.getId()).ruleKey("min_recovery_confidence").ruleValue("0.75").description("Minimum AI confidence required to execute recovery").build(),
+            PolicyRule.builder().workspaceId(ws.getId()).ruleKey("max_retries_per_transaction").ruleValue("3").description("Maximum number of autonomous retry attempts per transaction").build(),
+            PolicyRule.builder().workspaceId(ws.getId()).ruleKey("require_human_for_repeated_failure").ruleValue("true").description("Escalate if the same failure reason occurs consecutively").build(),
+            PolicyRule.builder().workspaceId(ws.getId()).ruleKey("auto_recovery_enabled").ruleValue("false").description("Master switch for autonomous recovery actions").build()
         ));
         
         return ws;
