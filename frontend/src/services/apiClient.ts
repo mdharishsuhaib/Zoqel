@@ -21,9 +21,12 @@ apiClient.interceptors.response.use(r => {
   return r;
 }, err => {
   if (err.response?.status === 401) {
+    // Only redirect to login for real authenticated sessions that have expired.
+    // Do NOT redirect if the 401 came from an attempted login/register itself!
+    const isAuthEndpoint = err.config?.url?.includes('/auth/');
     const isDemoMode = !!localStorage.getItem('zoqel_demo_token');
-    if (!isDemoMode) {
-      // Only redirect to login for real authenticated sessions
+    
+    if (!isDemoMode && !isAuthEndpoint) {
       localStorage.removeItem('zoqel_user');
       localStorage.removeItem('zoqel_token');
       window.location.href = '/login';
