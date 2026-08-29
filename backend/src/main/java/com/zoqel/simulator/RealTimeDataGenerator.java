@@ -27,38 +27,44 @@ public class RealTimeDataGenerator {
 
     private boolean enabled = true;
 
-    // Runs every 10 seconds to generate a live transaction, starting 30s after boot
+    // Runs every 10 seconds to generate a live transaction per workspace, starting 30s after boot
     @Scheduled(initialDelay = 30000, fixedRate = 10000)
     public void generateLiveTransaction() {
         if (!enabled) return;
-        log.info("RealTimeDataGenerator first execution (or scheduled execution) started");
 
-        List<Customer> customers = customerRepository.findAll();
-        if (customers.isEmpty()) return;
+        List<Customer> allCustomers = customerRepository.findAll();
+        if (allCustomers.isEmpty()) return;
 
-        Customer randomCustomer = customers.get(ThreadLocalRandom.current().nextInt(customers.size()));
-        
-        FailureReason[] reasons = FailureReason.values();
-        FailureReason reason = reasons[ThreadLocalRandom.current().nextInt(reasons.length)];
-        
-        long amountPaise = ThreadLocalRandom.current().nextLong(50000, 500000); // 500 to 5000 INR
+        // Group customers by workspace
+        java.util.Map<String, List<Customer>> customersByWorkspace = allCustomers.stream()
+            .collect(java.util.stream.Collectors.groupingBy(Customer::getWorkspaceId));
 
-        SimulateTransactionRequest req = SimulateTransactionRequest.builder()
-                .customerId(randomCustomer.getId())
-                .amountPaise(amountPaise)
-                .failureReason(reason)
-                .paymentMethod(PaymentMethod.UPI)
-                .build();
+        for (List<Customer> workspaceCustomers : customersByWorkspace.values()) {
+            if (workspaceCustomers.isEmpty()) continue;
 
-        try {
-            var transaction = transactionService.simulate(req, randomCustomer.getWorkspaceId());
-            log.info("Live data generated: FAILED transaction {}", transaction.getId());
+            Customer randomCustomer = workspaceCustomers.get(ThreadLocalRandom.current().nextInt(workspaceCustomers.size()));
             
-            // Immediately run the AI agent on it!
-            recoveryCaseService.process(transaction.getId(), randomCustomer.getWorkspaceId());
-            log.info("Live AI processing complete for {}", transaction.getId());
-        } catch (Exception e) {
-            log.error("Failed to process live transaction", e);
+            FailureReason[] reasons = FailureReason.values();
+            FailureReason reason = reasons[ThreadLocalRandom.current().nextInt(reasons.length)];
+            
+            long amountPaise = ThreadLocalRandom.current().nextLong(50000, 500000); // 500 to 5000 INR
+
+            SimulateTransactionRequest req = SimulateTransactionRequest.builder()
+                    .customerId(randomCustomer.getId())
+                    .amountPaise(amountPaise)
+                    .failureReason(reason)
+                    .paymentMethod(PaymentMethod.UPI)
+                    .build();
+
+            try {
+                var transaction = transactionService.simulate(req, randomCustomer.getWorkspaceId());
+                log.info("Live data generated for workspace {}: FAILED transaction {}", randomCustomer.getWorkspaceId(), transaction.getId());
+                
+                // Immediately run the AI agent on it!
+                recoveryCaseService.process(transaction.getId(), randomCustomer.getWorkspaceId());
+            } catch (Exception e) {
+                log.error("Failed to process live transaction for workspace {}", randomCustomer.getWorkspaceId(), e);
+            }
         }
     }
 }
