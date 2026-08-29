@@ -80,7 +80,7 @@ export function OnboardingWizard() {
         <div className="bg-[#101828] p-8 text-white text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-[#101828] via-[#1A2333] to-[#2B84EA]/20 opacity-80" />
           <div className="relative z-10 flex flex-col items-center">
-            <Logo />
+            <Logo variant="dark" />
             <h2 className="mt-6 text-2xl font-bold">Connect &rarr; Configure &rarr; Recover</h2>
             <p className="mt-2 text-[#9CA3AF]">Set up your autonomous recovery engine.</p>
           </div>
