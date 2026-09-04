@@ -1,4 +1,4 @@
-# Zoqel — Evaluation Methodology
+﻿# Zoqel â€” Evaluation Methodology
 
 ## Overview
 
@@ -7,7 +7,7 @@ The final numbers come from a held-out test set that was never used during train
 
 ---
 
-## Zero-Recall Classes — Why This Is Correct Behaviour
+## Zero-Recall Classes â€” Why This Is Correct Behaviour
 
 Four failure classes show precision=0.00 / recall=0.00 in `evaluation/report.txt`:
 
@@ -16,7 +16,7 @@ Four failure classes show precision=0.00 / recall=0.00 in `evaluation/report.txt
 | EXPIRED_CARD | 191 | 5% | Card is physically expired. Retry will fail again. Correct decision: do not intervene. |
 | INSUFFICIENT_FUNDS | 309 | 4% | Customer has no money. No retry strategy recovers this. Correct decision: do not intervene. |
 | REPEATED_FAILURE | 138 | 14% | Transaction has already failed multiple times. Policy engine's `require_human_for_repeated_failure` flag routes these to human review. |
-| DUPLICATE_ATTEMPT | 35 | 0% | Duplicate payments should never be retried — that would charge the customer twice. Zero recall = zero false retries on duplicate payments. This is the safest possible outcome. |
+| DUPLICATE_ATTEMPT | 35 | 0% | Duplicate payments should never be retried â€” that would charge the customer twice. Zero recall = zero false retries on duplicate payments. This is the safest possible outcome. |
 
 > **For judges:** A model with high recall on EXPIRED_CARD or DUPLICATE_ATTEMPT would be **less** safe, not more. These classes have structurally zero or near-zero recoverability by domain design. The model correctly predicts "don't intervene" on unrecoverable failures, which is what the policy engine's stopping-rule architecture is designed to enforce.
 
@@ -50,13 +50,13 @@ The classes where the model is aggressive (BANK_TIMEOUT recall=1.00, NETWORK_ERR
 ### Split
 ```
 10,000 transactions
-       │
-       ├── 70%  (7,000)  → transactions_train.csv   [model training]
-       ├── 15%  (1,500)  → transactions_val.csv     [hyperparameter tuning]
-       └── 15%  (1,500)  → transactions_test.csv    [HELD-OUT — final evaluation only]
+       â”‚
+       â”œâ”€â”€ 70%  (7,000)  â†’ transactions_train.csv   [model training]
+       â”œâ”€â”€ 15%  (1,500)  â†’ transactions_val.csv     [hyperparameter tuning]
+       â””â”€â”€ 15%  (1,500)  â†’ transactions_test.csv    [HELD-OUT â€” final evaluation only]
 ```
 
-The test set is loaded once — in `evaluate.py` — and never used during training.
+The test set is loaded once â€” in `evaluate.py` â€” and never used during training.
 
 ---
 
@@ -72,7 +72,7 @@ Random(simulatorSeed + 2 * 31337L).nextDouble() < base_recovery_probability
 Where `base_recovery_probability` depends on `failure_reason` and is modestly adjusted
 by customer payment history (success rate, failure count).
 
-This ensures the ML model is trained on realistic, consistent data — not arbitrary labels.
+This ensures the ML model is trained on realistic, consistent data â€” not arbitrary labels.
 
 ---
 
@@ -97,11 +97,11 @@ More important than ML metrics for Razorpay's evaluation:
 
 | Metric | Definition |
 |---|---|
-| **Revenue at Risk (₹)** | Total amount of all failed transactions evaluated |
-| **Truly Recoverable (₹)** | Amount that was actually recoverable (ground truth) |
-| **Revenue Recovered (₹)** | Amount from transactions where Zoqel correctly predicted and executed recovery |
-| **Revenue Missed (₹)** | Amount from false negatives (recoverable, but Zoqel predicted not) |
-| **False Intervention Cost (₹)** | Amount from false positives (not recoverable, but Zoqel tried) |
+| **Revenue at Risk (â‚¹)** | Total amount of all failed transactions evaluated |
+| **Truly Recoverable (â‚¹)** | Amount that was actually recoverable (ground truth) |
+| **Revenue Recovered (â‚¹)** | Amount from transactions where Zoqel correctly predicted and executed recovery |
+| **Revenue Missed (â‚¹)** | Amount from false negatives (recoverable, but Zoqel predicted not) |
+| **False Intervention Cost (â‚¹)** | Amount from false positives (not recoverable, but Zoqel tried) |
 | **Recovery Rate** | Revenue Recovered / Truly Recoverable |
 
 ---
@@ -110,12 +110,12 @@ More important than ML metrics for Razorpay's evaluation:
 
 Unlike most ML problems, Zoqel's false positives have a real cost:
 
-- **True Positive**: +₹amount recovered
+- **True Positive**: +â‚¹amount recovered
 - **False Positive**: Intervention attempt on an unrecoverable transaction
   (operational cost, potential customer friction)
-- **False Negative**: ₹amount permanently lost
+- **False Negative**: â‚¹amount permanently lost
 
-The evaluation explicitly reports the ₹ value tied to false positives (see `revenue_falsely_intervened_paise`)
+The evaluation explicitly reports the â‚¹ value tied to false positives (see `revenue_falsely_intervened_paise`)
 so the cost is visible, not hidden.
 
 ---
@@ -126,9 +126,9 @@ The optimal threshold for Zoqel is not the one that maximizes F1.
 It is the one that maximizes:
 
 ```
-Expected Value = P(TP) × Revenue_Recovered
-               - P(FP) × Intervention_Cost
-               - P(FN) × Revenue_Lost
+Expected Value = P(TP) Ã— Revenue_Recovered
+               - P(FP) Ã— Intervention_Cost
+               - P(FN) Ã— Revenue_Lost
 ```
 
 For the Razorpay demo, we use the default threshold (0.5) and the policy engine's
@@ -173,11 +173,11 @@ Running them on any machine produces identical results.
 The complete recovery workflow was validated against the live Render + Supabase deployment:
 
 ```
-Register → Workspace → Policy config → Customer creation
-→ POST /api/transactions/simulate  (Rs.4,999 NETWORK_ERROR, UPI)
-→ POST /api/recovery/process/{id}  (full AI pipeline)
-→ GET  /api/audit                  (8-event audit trail)
-→ GET  /api/dashboard/metrics      (updated live)
+Register â†’ Workspace â†’ Policy config â†’ Customer creation
+â†’ POST /api/transactions/simulate  (Rs.4,999 NETWORK_ERROR, UPI)
+â†’ POST /api/recovery/process/{id}  (full AI pipeline)
+â†’ GET  /api/audit                  (8-event audit trail)
+â†’ GET  /api/dashboard/metrics      (updated live)
 ```
 
 **Verified outcome:**
@@ -187,14 +187,14 @@ Register → Workspace → Policy config → Customer creation
 | Transaction ingested | `id=3ad13ea2`, status=FAILED |
 | Risk detection | score=60 |
 | Recovery probability | 0.75 |
-| Agent decision | RETRY (confidence=0.78) — *"Network error is typically transient and the recovery probability is high (0.75); a retry is likely to succeed."* |
-| Policy validation | POLICY_VALIDATED — all bounds cleared |
+| Agent decision | RETRY (confidence=0.78) â€” *"Network error is typically transient and the recovery probability is high (0.75); a retry is likely to succeed."* |
+| Policy validation | POLICY_VALIDATED â€” all bounds cleared |
 | Simulator outcome | SUCCESS |
 | Final transaction status | **RECOVERED** |
 | Dashboard after | revenueRecovered=Rs.4,999 / recoveryRate=100% |
 
 The 8-step audit trail was verified in order:
-`RISK_DETECTED → RECOVERY_CASE_OPENED → PROBABILITY_CALCULATED → AGENT_DECISION → POLICY_VALIDATED → ACTION_EXECUTED → OUTCOME_RECORDED → RECOVERY_CASE_CLOSED`
+`RISK_DETECTED â†’ RECOVERY_CASE_OPENED â†’ PROBABILITY_CALCULATED â†’ AGENT_DECISION â†’ POLICY_VALIDATED â†’ ACTION_EXECUTED â†’ OUTCOME_RECORDED â†’ RECOVERY_CASE_CLOSED`
 
 A separate 1,500-transaction batch script is documented as a future reproducibility exercise but has not been run against the live database (to avoid polluting shared demo-workspace data). The offline `evaluate.py` metrics on the 1,500-transaction held-out test set represent the same population.
 
@@ -214,3 +214,8 @@ This produces **two sets of metrics**:
 
 Both sets of metrics are reported honestly, including cases where the policy engine
 blocked a correct agent recommendation.
+
+
+## Note on 0% Recovery Metrics
+
+**Important:** You may notice 0% precision/recall on INSUFFICIENT_FUNDS and DUPLICATE_ATTEMPT in the evaluation report. This is **policy-enforced, not a model failure**. The PolicyEngine deliberately blocks auto-retries on insufficient funds and duplicates, so 0% intervention is the exact intended behavior.
