@@ -181,7 +181,7 @@ export function OnboardingWizard() {
                 <p className="text-[#475467] text-sm mb-2">Link your Razorpay sandbox to allow Zoqel to monitor and recover failed transactions.</p>
                 <div className="mb-6">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                    Sandbox Simulator â€” no real credentials required
+                    Sandbox Simulator - no real credentials required
                   </span>
                 </div>
 
@@ -284,6 +284,7 @@ export function OnboardingWizard() {
     </div>
   );
 }
+
 
 
 
