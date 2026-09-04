@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Building2, CreditCard, Shield, CheckCircle2, Loader2, ArrowRight, ArrowLeft } from 'lucide-react';
@@ -16,7 +16,7 @@ export function OnboardingWizard() {
 
   // Step 1 State
   const [workspaceName, setWorkspaceName] = useState('');
-  const [businessType, setBusinessType] = useState('SaaS');
+  const [businessType, setBusinessType] = useState('');
 
   // Step 2 State
   const [razorpayConnected, setRazorpayConnected] = useState(false);
@@ -31,6 +31,10 @@ export function OnboardingWizard() {
   const createWorkspace = async () => {
     if (!workspaceName) {
       setError('Workspace name is required');
+      return;
+    }
+    if (!businessType) {
+      setError('Please select a business type');
       return;
     }
     setIsLoading(true);
@@ -155,10 +159,16 @@ export function OnboardingWizard() {
                     <label className="block text-sm font-medium text-[#344054] mb-2">Business Type</label>
                     <select value={businessType} onChange={(e) => setBusinessType(e.target.value)}
                       className="w-full px-4 py-3 border border-[#D0D5DD] rounded-lg focus:ring-2 focus:ring-[#2B84EA] focus:border-[#2B84EA] outline-none">
-                      <option value="SaaS">SaaS / Subscription</option>
-                      <option value="E-commerce">E-commerce</option>
-                      <option value="EdTech">EdTech</option>
-                      <option value="Other">Other</option>
+                      <option value="" disabled>Select your business type</option>
+                      <option value="Retail & E-commerce">Retail & E-commerce</option>
+                      <option value="Digital Goods & SaaS">Digital Goods & SaaS</option>
+                      <option value="Professional Services">Professional Services</option>
+                      <option value="Education & Ed-Tech">Education & Ed-Tech</option>
+                      <option value="Travel, Hospitality & Logistics">Travel, Hospitality & Logistics</option>
+                      <option value="Financial & Advisory Services">Financial & Advisory Services</option>
+                      <option value="Gaming">Gaming</option>
+                      <option value="High-Value Goods">High-Value Goods</option>
+                      <option value="Healthcare & Wellness">Healthcare & Wellness</option>
                     </select>
                   </div>
                 </div>
@@ -171,7 +181,7 @@ export function OnboardingWizard() {
                 <p className="text-[#475467] text-sm mb-2">Link your Razorpay sandbox to allow Zoqel to monitor and recover failed transactions.</p>
                 <div className="mb-6">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                    Sandbox Simulator — no real credentials required
+                    Sandbox Simulator â€” no real credentials required
                   </span>
                 </div>
 
@@ -274,3 +284,6 @@ export function OnboardingWizard() {
     </div>
   );
 }
+
+
+
