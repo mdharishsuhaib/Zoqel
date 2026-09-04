@@ -40,9 +40,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   const login = (user: any, token: string) => {
+    // Clear ALL previous session data (including previous user's onboarding flag)
+    // before setting the new user, so User B never inherits User A's state.
+    localStorage.removeItem('zoqel_onboarding');
+    localStorage.removeItem('zoqel_demo_token');
     localStorage.setItem('zoqel_user', JSON.stringify(user));
     localStorage.setItem('zoqel_token', token);
-    localStorage.removeItem('zoqel_demo_token');
     setState({ mode: 'AUTHENTICATED', user, token, onboardingComplete: false });
   };
 
