@@ -53,10 +53,22 @@ autonomously executes a recovery strategy.
 
 ---
 
+## Judging Rubric Mapping
+
+To help judges evaluate this submission against the Track 03 criteria, here is exactly where our core mechanics are proven in the repository:
+
+- **Problem Taste & Engineering Maturity** → [`docs/design-decisions.md`](docs/design-decisions.md) (Explains our real-world trade-offs: paise-as-integer, deterministic simulation over mock APIs, LLM-recommends vs Engine-authorizes)
+- **AI Judgment & Boundary Enforcement** → [`backend/src/main/java/com/zoqel/policy/PolicyEngine.java`](backend/src/main/java/com/zoqel/policy/PolicyEngine.java) (The deterministic layer that blocks the LLM on insufficient funds, enforces max retries, and handles escalation)
+- **Measured Money Recovered (Build Quality)** → [`evaluation/report.txt`](evaluation/report.txt) and [`docs/evaluation.md`](docs/evaluation.md) (Real ML metrics proving ₹54L recovered out of ₹60L)
+- **Failure Recovery** → [`docs/failure-analysis.md`](docs/failure-analysis.md) (Documentation of 6 critical bugs we hit during development—like idempotent retries and N+1 queries—and exactly how we fixed them)
+
+---
+
 ## Overview
 
-Zoqel is an AI-powered control center that sits between a merchant's payment gateway and
-their customer base. 
+Zoqel is an AI-powered control center that sits between a merchant's payment gateway and their customer base. 
+
+> **Scope Note:** *v1 focuses entirely on payment-failure recovery. Checkout abandonment, failed subscriptions, and overdue B2B receivables all share this exact same policy engine and are the immediate next milestone.* 
 
 Pipeline, end to end:
 
@@ -458,4 +470,5 @@ Check the backend logs to ensure Flyway successfully migrated the Supabase datab
 
 React 18 · TypeScript · Tailwind CSS · Vite · Zustand · Java 21 · Spring Boot 3 ·
 Spring Security · Supabase (PostgreSQL) · Flyway · Docker · Render · Cloudflare Workers
+
 
