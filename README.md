@@ -472,3 +472,4 @@ React 18 · TypeScript · Tailwind CSS · Vite · Zustand · Java 21 · Spring B
 Spring Security · Supabase (PostgreSQL) · Flyway · Docker · Render · Cloudflare Workers
 
 
+
