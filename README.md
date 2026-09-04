@@ -233,3 +233,99 @@ Returns a paginated list of all transactions belonging to the current user's wor
 
 ### GET /api/audit
 Returns the immutable chronological feed of every action taken by the AI agent, the policy engine, or the simulator within the user's workspace.
+### POST \/api/transactions/simulate\
+\\\json
+{
+  "customerId": "uuid",
+  "amountPaise": 50000,
+  "failureReason": "INSUFFICIENT_FUNDS",
+  "paymentMethod": "UPI"
+}
+\\\
+Triggers the creation of a failed transaction for the current workspace. Automatically fires the Risk Detection and Policy Engine.
+
+### POST \/api/recovery/process/{transactionId}\
+Forces the AI Agent to evaluate and attempt to recover a specific failed transaction.
+
+---
+
+## Database Schema
+
+Supabase Postgres is used as the relational store. All queries in the Spring Boot backend automatically append \WHERE workspace_id = ?\ using the \CurrentUserService\ to enforce tenant isolation.
+
+| Table | Purpose |
+|---|---|
+| \workspaces\ | Root tenant object. One workspace per merchant. |
+| \pp_users\ | Users authorized to view/manage a workspace. |
+| \	ransactions\ | The core ledger. Tracks amount, status, and failure reason. |
+| \customers\ | End-users making payments. Contains their historical risk profiles. |
+| \ecovery_cases\ | Created when a transaction fails. Tracks the AI agent's interventions and resolutions. |
+| \policy_rules\ | Merchant-defined limits (e.g., max auto amount, max retries). |
+| \udit_events\ | Immutable chronological log of every system and AI action. |
+
+---
+
+## Credential Handling & Security Model
+
+- **Stateless Authentication:** User sessions are managed via JWT. The backend does not store session state in memory. 
+- **Demo Isolation:** The \DemoGuardFilter\ automatically intercepts any requests made by the \demo-workspace\. \GET\ requests are permitted to allow dashboard viewing, but \POST\/\PUT\/\DELETE\ requests are strictly blocked at the filter level to prevent demo users from corrupting shared data.
+- **Data Scoping:** Every single entity (Transaction, Customer, Policy, Recovery Case) is strictly bound to a \workspace_id\. The \CurrentUserService\ injects the authenticated user's workspace ID into every database query, making cross-tenant data leaks impossible.
+
+---
+
+## Operational Limits and Constraints
+
+| Constraint | Value | Where |
+|---|---|---|
+| Simulator Frequency | 10 seconds / workspace | \RealTimeDataGenerator.java\ |
+| Dashboard Polling | 15 seconds | \OverviewPage.tsx\ |
+| Max Auto Amount | Configurable (Default: 10,000 INR) | \pplication.yml\ (\zoqel.policy.max-auto-amount-paise\) |
+| Min AI Confidence | Configurable (Default: 0.75) | \pplication.yml\ (\zoqel.policy.min-confidence\) |
+| Max Retries | Configurable (Default: 1) | \pplication.yml\ (\zoqel.policy.max-retries\) |
+
+---
+
+## Deployment Details
+
+### Backend -> Render (Web Service)
+
+- **Root directory:** \ackend\
+- **Environment:** \Docker\ (Render will automatically detect the optimized \Dockerfile\)
+- **Environment variables:** \DB_URL\, \DB_USER\, \DB_PASSWORD\, \FRONTEND_URL\, \JWT_SECRET\.
+- Render automatically sets \PORT\ and exposes your application over HTTPS.
+
+### Frontend -> Cloudflare Workers / Vercel
+
+- **Environment variables:** \VITE_API_BASE_URL\ (set to your Render backend URL, e.g., \https://zoqel-api.onrender.com/api\).
+- If deploying to Vercel, simply import the GitHub repository, set the framework to \Vite\, and add the environment variable.
+
+---
+
+## Running Tests
+
+Backend tests are written using JUnit 5 and Spring Boot Test. 
+To execute the test suite locally:
+
+\\\ash
+cd backend
+mvn test
+\\\
+
+---
+
+## Troubleshooting
+
+### CORS error in the browser console
+\Access-Control-Allow-Origin header missing\ — The \FRONTEND_URL\ environment variable on the backend either isn't set or doesn't exactly match the frontend's origin. Ensure there is **no trailing slash** (e.g., \http://localhost:5173\).
+
+### "Server is waking up" / Reconnecting UI remains stuck
+If you are on Render's free tier, the backend spins down after 15 minutes of inactivity. When you open the frontend, the first request will take 60–90 seconds while Render boots the Docker container. The UI is designed to handle this gracefully. Wait 90 seconds.
+
+### Data is missing / 404 errors on startup
+Did you run the Flyway migrations? Make sure your Supabase database has the required tables created.
+
+---
+
+## Tech Stack
+
+React 18 • TypeScript • Tailwind CSS • Vite • Zustand • Java 21 • Spring Boot 3 • Spring Security • Supabase (PostgreSQL) • Flyway • Docker • Render • Cloudflare Workers
