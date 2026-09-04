@@ -170,7 +170,7 @@ flowchart TD
 
 ```text
 zoqel/
-├── backend/
+/
 │   ├── src/main/java/com/zoqel/
 │   │   ├── agent/           # AI Gateway, LLM decision models, actions
 │   │   ├── audit/           # Immutable event logging engine
@@ -187,7 +187,7 @@ zoqel/
 │   │   └── application.yml  # Spring Boot configuration
 │   ├── Dockerfile           # Optimized multi-stage build (-Xmx256m -Xss512k)
 │   └── pom.xml
-└── frontend/
+/
     ├── src/
     │   ├── app/             # React app shell & routing
     │   ├── components/      # UI primitives, charts, metrics, skeletons
@@ -470,6 +470,7 @@ Check the backend logs to ensure Flyway successfully migrated the Supabase datab
 
 React 18 · TypeScript · Tailwind CSS · Vite · Zustand · Java 21 · Spring Boot 3 ·
 Spring Security · Supabase (PostgreSQL) · Flyway · Docker · Render · Cloudflare Workers
+
 
 
 
