@@ -16,10 +16,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 export function OverviewPage() {
   const [timeRange, setTimeRange] = useState<'30D' | '7D'>('30D');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
-  const { data: metrics, isLoading: isMetricsLoading, isError: isMetricsError } = useQuery({ queryKey: ['metrics'], queryFn: getDashboardMetrics, refetchInterval: 8000, retry: 3 });
-  const { data: chartData, isLoading: isChartLoading } = useQuery({ queryKey: ['chart'], queryFn: getChartData, refetchInterval: 8000 });
-  const { data: txData } = useQuery({ queryKey: ['transactions', 0, 5], queryFn: () => getTransactions(0, 5), refetchInterval: 8000 });
-  const { data: auditEvents } = useQuery({ queryKey: ['auditEvents'], queryFn: () => getAuditEvents(), refetchInterval: 8000 });
+  const { data: metrics, isLoading: isMetricsLoading, isError: isMetricsError } = useQuery({ queryKey: ['metrics'], queryFn: getDashboardMetrics, refetchInterval: 15000, refetchIntervalInBackground: true, retry: 2 });
+  const { data: chartData, isLoading: isChartLoading } = useQuery({ queryKey: ['chart'], queryFn: getChartData, refetchInterval: 15000, refetchIntervalInBackground: true, retry: 2 });
+  const { data: txData } = useQuery({ queryKey: ['transactions', 0, 5], queryFn: () => getTransactions(0, 5), refetchInterval: 15000, refetchIntervalInBackground: true, retry: 2 });
+  const { data: auditEvents } = useQuery({ queryKey: ['auditEvents'], queryFn: () => getAuditEvents(), refetchInterval: 15000, refetchIntervalInBackground: true, retry: 2 });
   const recentTx = txData?.content || [];
 
   const filteredChartData = useMemo(() => {
@@ -162,6 +162,7 @@ export function OverviewPage() {
     </div>
   );
 }
+
 
 
 

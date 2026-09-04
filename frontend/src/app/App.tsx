@@ -32,16 +32,23 @@ function ScrollToTop() {
 
 function DemoRoute() {
   const { enableDemoMode, mode } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(mode !== 'AUTHENTICATED');
+  const [demoError, setDemoError] = useState('');
+
   useEffect(() => {
-    // GUARD: never overwrite a real authenticated session with demo mode.
-    // If the user is already signed in, just send them straight to the app.
-    if (mode === 'AUTHENTICATED') {
-      setLoading(false);
-      return;
-    }
-    enableDemoMode().finally(() => setLoading(false));
-  }, []);
+    // GUARD: authenticated users go straight to the app — never call enableDemoMode.
+    if (mode === 'AUTHENTICATED') return;
+
+    enableDemoMode()
+      .catch((err: any) => setDemoError(err?.message || 'Demo service is unavailable.'))
+      .finally(() => setLoading(false));
+  }, [mode, enableDemoMode]);
+
+  // Explicit navigate so the component always returns a valid React element.
+  if (mode === 'AUTHENTICATED') {
+    return <Navigate to="/app" replace />;
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#101828]">
@@ -55,6 +62,23 @@ function DemoRoute() {
       </div>
     );
   }
+
+  if (demoError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#101828]">
+        <div className="flex flex-col items-center gap-4 text-white text-center max-w-xs">
+          <p className="text-sm text-[#F87171]">{demoError}</p>
+          <button
+            onClick={() => { setDemoError(''); setLoading(true); enableDemoMode().catch((e: any) => setDemoError(e?.message || 'Demo unavailable.')).finally(() => setLoading(false)); }}
+            className="px-4 py-2 bg-[#2B84EA] text-white text-sm font-medium rounded-lg hover:bg-[#1A6DD0] transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return <Navigate to="/app" replace />;
 }
 
