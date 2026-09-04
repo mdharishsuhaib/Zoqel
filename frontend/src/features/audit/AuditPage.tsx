@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatusBadge } from '../../components/ui/StatusBadge';
@@ -36,7 +36,7 @@ export function AuditPage() {
               ) : (
                 events.map(e => (
                   <tr key={e.id} className="hover:bg-[#F9FAFB]">
-                    <td className="px-6 py-4 text-[#475467]">{new Date(e.timestamp).toLocaleString()}</td>
+                    <td className="px-6 py-4 text-[#475467]">{new Date(e.occurredAt).toLocaleString()}</td>
                     <td className="px-6 py-4"><StatusBadge status={e.eventType} /></td>
                     <td className="px-6 py-4 font-medium text-[#101828]">{e.transactionId}</td>
                     <td className="px-6 py-4 font-mono text-xs text-[#667085]">{e.actor}</td>

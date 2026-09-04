@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, RefreshCw, MessageSquareWarning } from 'lucide-react';
@@ -63,7 +63,7 @@ export function TransactionDetailPage() {
                   <div className="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.5rem)] bg-[#1F2937] p-4 rounded-xl border border-[#374151] shadow">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-[10px] uppercase tracking-wider font-bold text-[#9CA3AF]">{e.actor}</span>
-                      <span className="text-[10px] text-[#6B7280]">{new Date(e.timestamp).toLocaleTimeString()}</span>
+                      <span className="text-[10px] text-[#6B7280]">{new Date(e.occurredAt).toLocaleTimeString()}</span>
                     </div>
                     <div className="text-sm font-medium text-white">{e.eventType}</div>
                     <div className="text-xs text-[#9CA3AF] mt-1">{e.eventDetail}</div>

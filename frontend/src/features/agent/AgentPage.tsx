@@ -1,4 +1,4 @@
-import { Activity, Shield, Brain, Zap, Key, Database, Globe, Lock } from 'lucide-react';
+﻿import { Activity, Shield, Brain, Zap, Key, Database, Globe, Lock } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { formatTime } from '../../utils/format';
 import { useQuery } from '@tanstack/react-query';
@@ -25,7 +25,7 @@ function ActorBadge({ actor }: { actor: string }) {
     'Zoqel': 'bg-[#111827] text-white',
   };
   const cl = colors[actor] || 'bg-[#667085] text-white';
-  return <span className={\px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase \\}>{actor}</span>;
+  return <span className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase ${cl}`}>{actor}</span>;
 }
 
 export function AgentPage() {
@@ -80,7 +80,7 @@ export function AgentPage() {
                     <ActorBadge actor={evt.actor} />
                     <span className="text-xs font-semibold text-[#101828]">{evt.eventType}</span>
                   </div>
-                  <span className="text-[11px] font-medium text-[#667085]">{formatTime(evt.timestamp)}</span>
+                  <span className="text-[11px] font-medium text-[#667085]">{formatTime(evt.occurredAt)}</span>
                 </div>
                 <div className="text-sm text-[#475467]">{evt.eventDetail}</div>
                 <div className="mt-2 text-[10px] font-mono text-[#9CA3AF]">TxID: {evt.transactionId}</div>
@@ -109,3 +109,6 @@ export function AgentPage() {
     </div>
   );
 }
+
+
+

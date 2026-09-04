@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -46,10 +46,10 @@ export function OverviewPage() {
           ))
         ) : (
           <>
-            <MetricCard title="Revenue at Risk" value={formatLakhsSymbol(metrics.revenueAtRiskPaise)} accent="danger" subtitle={`Last ${timeRange}`} />
-            <MetricCard title="Recoverable Revenue" value={formatLakhsSymbol(metrics.recoverableRevenuePaise)} accent="blue" subtitle="Estimated by Zoqel" />
-            <MetricCard title="Revenue Recovered" value={formatLakhsSymbol(metrics.revenueRecoveredPaise)} accent="success" subtitle="Successfully completed" />
-            <MetricCard title="Recovery Rate" value={`${Number(metrics.recoveryRate).toFixed(1)}%`} accent="violet" subtitle="Of recoverable revenue" trend={{ value: '+2.1%', positive: true }} />
+            <MetricCard title="Revenue at Risk" value={formatLakhsSymbol(metrics?.revenueAtRiskPaise || 0)} accent="danger" subtitle={`Last ${timeRange}`} />
+            <MetricCard title="Recoverable Revenue" value={formatLakhsSymbol((metrics?.recoverableRevenuePaise || 0))} accent="blue" subtitle="Estimated by Zoqel" />
+            <MetricCard title="Revenue Recovered" value={formatLakhsSymbol((metrics?.revenueRecoveredPaise || 0))} accent="success" subtitle="Successfully completed" />
+            <MetricCard title="Recovery Rate" value={`${Number((metrics?.recoveryRate || 0)).toFixed(1)}%`} accent="violet" subtitle="Of recoverable revenue" trend={{ value: '+2.1%', positive: true }} />
           </>
         )}
       </div>
@@ -162,6 +162,8 @@ export function OverviewPage() {
     </div>
   );
 }
+
+
 
 
 

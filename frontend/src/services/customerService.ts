@@ -1,4 +1,4 @@
-import apiClient from './apiClient';
+﻿import apiClient from './apiClient';
 import type { Customer, PagedResponse } from '../types';
 
 export async function getCustomers(page = 0, size = 50): Promise<PagedResponse<Customer>> {
@@ -6,5 +6,6 @@ export async function getCustomers(page = 0, size = 50): Promise<PagedResponse<C
 }
 
 export async function getCustomerHistory(id: string): Promise<any> {
-  return (await apiClient.get<any>(/customers/ + id + /history)).data;
+  return (await apiClient.get<any>('/customers/' + id + '/history')).data;
 }
+
