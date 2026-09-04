@@ -1,123 +1,107 @@
-# Zoqel: AI-Powered Autonomous Revenue Recovery
+﻿<div align="center">
 
-<div align="center">
-  <b>Built for the Razorpay AI Buildathon 2026 — Track 03: AI Revenue Recovery</b>
-  <br><br>
-  <i>Stop losing 30% of your recurring revenue to false declines. Zoqel replaces static "dunning" emails with a deterministic-gated AI Agent that autonomously detects, diagnoses, and safely recovers failed payments before your customers even notice.</i>
+# Zoqel AI
+
+**Autonomous AI Payment Recovery Agent for Razorpay**
+
+[![Backend](https://img.shields.io/badge/Backend-Spring_Boot_3-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](#)
+[![Frontend](https://img.shields.io/badge/Frontend-React_18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](#)
+[![Database](https://img.shields.io/badge/Database-Supabase_Postgres-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](#)
+[![Hosting](https://img.shields.io/badge/Hosting-Render_&_Cloudflare-F6821F?style=for-the-badge&logo=cloudflare&logoColor=white)](#)
+
 </div>
 
 ---
 
-## 🚀 Live Demo
-- **Frontend App**: [zoqel.mdharishsuhaib.workers.dev](https://zoqel.mdharishsuhaib.workers.dev)
-- **Backend API**: [zoqel-8ly3.onrender.com/api](https://zoqel-8ly3.onrender.com/api)
-- **Quick Entry**: Navigate to `/demo` in the frontend. You will instantly receive a sandboxed JWT scoped to a `demo-workspace`. No signup required.
+## Hackathon Submission
 
-> **Note:** The backend runs on a free Render tier and may take ~90 seconds to cold-start. Once live, a background simulator continuously generates synthetic failed transactions every 10 seconds to populate your dashboard.
+Built for the **Razorpay Buildathon** — an autonomous merchant-facing agent that answers the billion-dollar e-commerce question: *"How do we intelligently recover failed payments without alienating customers or burning engineering time on static retry loops?"*
 
----
-
-## ⚡ The Problem vs. The Zoqel Solution
-
-**The Problem:** Traditional payment recovery ("dunning") relies on rigid, rule-based retry schedules and spamming customers with emails. It's blind to context and alienates users.
-
-**The Solution:** Zoqel introduces an intelligent, bounded AI Agent that reasons about *why* a payment failed and executes the optimal recovery path. 
-
-Every money action in Zoqel is **explainable, bounded, and gated.**
-
-### The Intelligence Pipeline
-```text
-[ Razorpay Webhook (payment.failed) ]
-                 ↓
-[ Deterministic Risk Detection ] (Calculates failure severity 0–100)
-                 ↓
-[ ML Recovery Probability Model ] (Historical success prediction)
-                 ↓
-[ Autonomous AI Agent ] (Ollama LLM calculates optimal action + confidence score)
-                 ↓
-[ Policy Engine Gatekeeper ] ("The LLM recommends. The policy authorises.")
-                 ↓
-[ Execution & Immutable Audit Log ]
-```
+Instead of a merchant relying on rigid, hardcoded cron jobs to retry failed payments, **Zoqel** acts as an autonomous financial agent. It intercepts failed transactions in real-time, evaluates the exact failure reason, cross-references the merchant's custom risk boundaries (e.g., maximum retry amounts, required confidence thresholds), and autonomously executes a recovery strategy.
 
 ---
 
-## 🛡️ Enterprise-Grade Security & Guardrails
+## Table of Contents
 
-We know that giving an AI financial control is risky. Zoqel was built with a "Safety-First" architecture:
-
-1. **Policy-Bounded Guardrails (Track 01 Alignment):** The AI cannot bypass the merchant's rules. If the AI recommends an auto-retry of ₹10,000, but the merchant's Policy Engine caps auto-retries at ₹5,000, the action is hard-blocked and escalated to a human.
-2. **Demo Mode Isolation (Track 02 Alignment):** Our Demo Mode isn't just frontend smoke. `DemoGuardFilter` enforces strict write-blocking at the HTTP layer. Unauthenticated webhooks targeting the demo workspace are rejected (`403 Forbidden`). 19/19 cross-tenant isolation tests pass on production.
-3. **Full-Stack Authentication Security:** Strict, multi-layered validation (BCrypt password hashing, rigorous length/complexity checks, and legal policy acceptance) enforced simultaneously on both the React frontend and Spring Boot backend. 
-4. **Webhook Security:** Webhooks strictly require valid Workspace UUIDs (`400 Bad Request` if missing). *(Note: HMAC signature validation is planned for production Phase B, but Phase 0 uses a controlled simulator event path).*
-
----
-
-## 📊 Measured Results (Held-Out Test Set)
-
-Zoqel’s Machine Learning layer was evaluated against a held-out test set of 10,000 transactions (never seen during training). The numbers speak for themselves:
-
-| Metric | Value |
-|---|---|
-| **Revenue at Risk** | **₹1.40 crore** |
-| **Truly Recoverable** | **₹60.16 lakh** |
-| **Revenue Recovered (By Zoqel)** | **₹53.97 lakh** |
-| **Recovery Rate** | **89.7%** |
-| False Intervention Cost | ₹7.18 lakh |
-
-*The model correctly avoids intervening on structurally unrecoverable failures (e.g., EXPIRED_CARD, INSUFFICIENT_FUNDS), resulting in highly efficient recovery without burning merchant resources.* Full breakdown available in `evaluation/report.txt`.
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [System Architecture](#system-architecture)
+- [Running Locally](#running-locally)
+- [Production Deployment](#production-deployment)
+- [Tech Stack](#tech-stack)
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## Overview
 
-| Component | Technology | Rationale |
-|---|---|---|
-| **Frontend** | React (Vite), TypeScript, Tailwind CSS | Lightning-fast, utility-first UI deployed to Cloudflare Workers. |
-| **Backend** | Java 21, Spring Boot 3.3, Flyway | Enterprise-grade, strongly typed multi-tenant API deployed to Render. |
-| **Database** | PostgreSQL 15 (Supabase) | Relational integrity with full JSONB support for audit trails. |
-| **AI Layer** | Ollama Cloud API (`gpt-oss:120b-cloud`) | High-reasoning LLM strictly constrained to structured JSON outputs. |
-| **ML Layer** | Python 3.11, `scikit-learn` | Fast, interpretable tabular ML (no GPUs required). |
+Zoqel is an AI-powered control center that sits between a merchant's payment gateway and their customer base. 
+
+Pipeline, end-to-end:
+1. **Onboarding:** Merchant signs up, creates a workspace, and connects their Razorpay sandbox. They configure their AI Agent boundaries (max retries, autonomous recovery limits, confidence thresholds).
+2. **Simulation / Real-time Monitoring:** A deterministic background simulator generates live, realistic failed transactions across different customers and failure reasons.
+3. **AI Evaluation:** The moment a transaction fails, Zoqel's AI intercepts it. It evaluates the risk and the failure reason (e.g., Insufficient Funds vs. Network Error).
+4. **Autonomous Execution:** If the recovery confidence exceeds the merchant's threshold, the agent executes the retry. If it falls below the threshold or hits a hard limit (e.g., 3 consecutive failures), it escalates the case to a human.
+5. **Live Dashboarding:** The merchant watches a live-polling dashboard (15s intervals) that tracks Revenue at Risk, Recoverable Revenue, and an active queue of the AI's operations, completely isolated to their workspace.
 
 ---
 
-## 💻 Local Development
+## Key Features
 
-### 1. Backend (Spring Boot)
-```bash
+- **Autonomous Policy Engine** — Merchants define exact boundaries (max_retries_per_transaction, min_recovery_confidence, max_auto_amount). The agent operates autonomously *only* within these boundaries, escalating anything outside them.
+- **Deterministic Live Simulator** — No empty dashboards. A background engine continuously generates realistic Razorpay transaction data across multiple customers, allowing judges and users to see the AI agent react in real-time.
+- **Resilient Real-Time Dashboard** — A live-polling dashboard (15s intervals with background refetching) that gracefully handles backend cold-starts with beautiful "Server waking up" / "Reconnecting..." UI states instead of breaking or showing fabricated data.
+- **Strict Multi-Tenancy (Workspace Isolation)** — Built from the ground up for SaaS. Every transaction, customer, recovery case, and policy rule is strictly scoped to a specific workspace_id. User A can *never* see User B's recovery queues.
+- **Immutable Audit Trail** — The AI agent's reasoning isn't a black box. Every decision, retry, escalation, and policy block is recorded in an immutable audit event log so merchants can see exactly *why* the AI took action.
+- **Bulletproof Session Handling** — Demo accounts and real authenticated accounts are strictly segregated. Visiting a demo route will never silently hijack or destroy a real merchant's active session.
+
+---
+
+## System Architecture
+
+Zoqel is designed as a highly resilient, decoupled system:
+
+- **Frontend (Cloudflare Workers):** React 18 + Vite + Tailwind CSS. Hosted on the edge for zero latency. Handles JWT session management, multi-step onboarding, and background live-polling.
+- **Backend (Render / Spring Boot 3):** A stateless Java Spring Boot API. Handles the heavy lifting: the deterministic simulator, the AI evaluation logic, transaction routing, and metric aggregation. Fully dockerized and optimized for 512MB free-tier constraints.
+- **Database (Supabase PostgreSQL):** The single source of truth. Handles relational data for workspaces, pp_users, 	ransactions, ecovery_cases, policy_rules, and udit_events.
+- **Stateless & Idempotent:** Built to survive network drops. Workspace creation is idempotent, and API errors naturally propagate to the frontend to trigger retry UI flows rather than silently failing.
+
+---
+
+## Running Locally
+
+### Prerequisites
+- Node.js 18+
+- Java 21+
+- Maven
+- A Supabase project (PostgreSQL)
+
+### 1. Database Setup
+Execute the SQL schemas found in ackend/src/main/resources/db/migration against your Supabase SQL editor to create the tables.
+
+### 2. Backend Setup
+\\\ash
 cd backend
-# Set environment variables: DB_URL, JWT_SECRET, OLLAMA_API_KEY
+export DB_URL=jdbc:postgresql://<SUPABASE_HOST>:5432/postgres?sslmode=require
+export DB_USER=postgres.<your-project>
+export DB_PASSWORD=<your-password>
+export JWT_SECRET=<your-secret>
 mvn spring-boot:run
-```
-*Note: Flyway runs all database migrations (V1 to V10) automatically on startup.*
+\\\
 
-### 2. Frontend (React)
-```bash
+### 3. Frontend Setup
+\\\ash
 cd frontend
 npm install
 npm run dev
-# Visit http://localhost:3000
-```
-
-### 3. ML Pipeline (Reproduce Evaluation)
-```bash
-cd ml
-python generate_dataset.py   # Generates 10,000 synthetic transactions
-python train_model.py        # Trains the model on a 70% split
-python evaluate.py           # Evaluates on the 15% held-out test set
-```
+\\\
 
 ---
 
-## 🧪 Comprehensive E2E Testing
+## Production Deployment
 
-Zoqel includes battle-tested integration scripts that run directly against the live backend:
-- `phase5_isolation_test.py`: Asserts strictly scoped data reads and write-blocking for Demo Mode vs. Real Users (**19/19 Pass**).
-- `phase6_full_test.py`: Full end-to-end pipeline test traversing the Webhook Parser, Risk Engine, LLM Agent, Policy Gate, and Audit Trail (**46/47 Pass**, 1 Warn for expected webhook signature bypass).
+Zoqel is currently optimized for a decoupled free-tier architecture:
+1. **Database:** Supabase (Always Free)
+2. **Backend:** Render (Docker Web Service, Free Tier)
+3. **Frontend:** Cloudflare Workers (Free Tier)
 
-*For a detailed log of real bugs caught and fixed during development (including Idempotency double-retries and N+1 query storms), see [`docs/failure-analysis.md`](docs/failure-analysis.md).*
-
----
-<div align="center">
-  <i>Designed and developed for the Razorpay AI Buildathon 2026.</i>
-</div>
+*Note: The backend Dockerfile is memory-optimized (-Xmx256m) specifically to prevent Out-Of-Memory (OOM) crashes on 512MB free-tier platforms.*
