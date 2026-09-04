@@ -16,10 +16,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 export function OverviewPage() {
   const [timeRange, setTimeRange] = useState<'30D' | '7D'>('30D');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
-  const { data: metrics, isLoading: isMetricsLoading } = useQuery({ queryKey: ['metrics'], queryFn: getDashboardMetrics });
-  const { data: chartData, isLoading: isChartLoading } = useQuery({ queryKey: ['chart'], queryFn: getChartData });
-  const { data: txData } = useQuery({ queryKey: ['transactions', 0, 5], queryFn: () => getTransactions(0, 5) });
-  const { data: auditEvents } = useQuery({ queryKey: ['auditEvents'], queryFn: () => getAuditEvents() });
+  const { data: metrics, isLoading: isMetricsLoading, isError: isMetricsError } = useQuery({ queryKey: ['metrics'], queryFn: getDashboardMetrics, refetchInterval: 8000, retry: 3 });
+  const { data: chartData, isLoading: isChartLoading } = useQuery({ queryKey: ['chart'], queryFn: getChartData, refetchInterval: 8000 });
+  const { data: txData } = useQuery({ queryKey: ['transactions', 0, 5], queryFn: () => getTransactions(0, 5), refetchInterval: 8000 });
+  const { data: auditEvents } = useQuery({ queryKey: ['auditEvents'], queryFn: () => getAuditEvents(), refetchInterval: 8000 });
   const recentTx = txData?.content || [];
 
   const filteredChartData = useMemo(() => {
@@ -35,8 +35,15 @@ export function OverviewPage() {
       />
       
       <div className="grid grid-cols-4 gap-4">
-        {isMetricsLoading || !metrics ? (
+        {isMetricsLoading ? (
           Array.from({ length: 4 }).map((_, i) => <MetricCardSkeleton key={i} />)
+        ) : isMetricsError ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-xl border border-[#E4E7EC] p-6 shadow-card flex flex-col items-center justify-center gap-2 text-center h-[110px]">
+              <div className="w-3 h-3 rounded-full bg-warning animate-pulse" />
+              <p className="text-xs text-[#667085]">Reconnecting to server...</p>
+            </div>
+          ))
         ) : (
           <>
             <MetricCard title="Revenue at Risk" value={formatLakhsSymbol(metrics.revenueAtRiskPaise)} accent="danger" subtitle={`Last ${timeRange}`} />
@@ -155,5 +162,7 @@ export function OverviewPage() {
     </div>
   );
 }
+
+
 
 

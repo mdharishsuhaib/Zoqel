@@ -10,6 +10,7 @@ export function OnboardingWizard() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [retryCount, setRetryCount] = useState(0);
   const { completeOnboarding } = useAuth();
   const navigate = useNavigate();
 
@@ -27,23 +28,35 @@ export function OnboardingWizard() {
   const [maxAmount, setMaxAmount] = useState(10000); // UI holds rupees, API needs paise. Wait, I will use maxAmount direct. Let's make it hold Rupees.
   const [humanReview, setHumanReview] = useState(true);
 
+  const createWorkspace = async () => {
+    if (!workspaceName) {
+      setError('Workspace name is required');
+      return;
+    }
+    setIsLoading(true);
+    setError('');
+    try {
+      await apiClient.post('/workspaces', { name: workspaceName, businessType });
+      setStep(2);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || 'Failed to create workspace';
+      const isTimeout = err.code === 'ECONNABORTED' || err.message?.includes('timeout');
+      setError(
+        isTimeout
+          ? 'Server is waking up (free tier cold-start). Click "Try Again" in a moment.'
+          : msg
+      );
+      setRetryCount(c => c + 1);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleNext = async () => {
     setError('');
     
     if (step === 1) {
-      if (!workspaceName) {
-        setError('Workspace name is required');
-        return;
-      }
-      setIsLoading(true);
-      try {
-        await apiClient.post('/workspaces', { name: workspaceName, businessType });
-        setStep(2);
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to create workspace');
-      } finally {
-        setIsLoading(false);
-      }
+      await createWorkspace();
     } else if (step === 2) {
       if (!razorpayConnected) {
         setError('Please connect your Razorpay sandbox account');
@@ -65,7 +78,7 @@ export function OnboardingWizard() {
         completeOnboarding();
         navigate('/app');
       } catch (err: any) {
-        setError('Failed to save policy settings');
+        setError('Failed to save policy settings. Please try again.');
       } finally {
         setIsLoading(false);
       }
@@ -114,8 +127,17 @@ export function OnboardingWizard() {
         {/* Content Body */}
         <div className="p-8">
           {error && (
-            <div className="mb-6 p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm font-medium">
-              {error}
+            <div className="mb-6 p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm font-medium flex items-start justify-between gap-4">
+              <span>{error}</span>
+              {retryCount > 0 && step === 1 && (
+                <button
+                  onClick={createWorkspace}
+                  disabled={isLoading}
+                  className="shrink-0 px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-md text-xs font-semibold transition-colors"
+                >
+                  Try Again
+                </button>
+              )}
             </div>
           )}
 

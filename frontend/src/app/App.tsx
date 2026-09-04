@@ -34,6 +34,12 @@ function DemoRoute() {
   const { enableDemoMode, mode } = useAuth();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    // GUARD: never overwrite a real authenticated session with demo mode.
+    // If the user is already signed in, just send them straight to the app.
+    if (mode === 'AUTHENTICATED') {
+      setLoading(false);
+      return;
+    }
     enableDemoMode().finally(() => setLoading(false));
   }, []);
   if (loading) {
