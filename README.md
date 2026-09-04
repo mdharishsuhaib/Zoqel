@@ -1,6 +1,10 @@
 ﻿<div align="center">
 <br/>
 
+<img src="public/logo.png" alt="Zoqel" width="150"/>
+
+# Zoqel
+
 **Autonomous AI Payment Recovery Agent for Razorpay**
 
 [![GitHub Stars](https://img.shields.io/github/stars/mdharishsuhaib/Zoqel?style=flat-square&logo=github&color=1f6feb&label=stars)](https://github.com/mdharishsuhaib/Zoqel/stargazers) [![GitHub Forks](https://img.shields.io/github/forks/mdharishsuhaib/Zoqel?style=flat-square&logo=github&color=f0883e&label=forks)](https://github.com/mdharishsuhaib/Zoqel/network/members)
@@ -454,3 +458,4 @@ Check the backend logs to ensure Flyway successfully migrated the Supabase datab
 
 React 18 · TypeScript · Tailwind CSS · Vite · Zustand · Java 21 · Spring Boot 3 ·
 Spring Security · Supabase (PostgreSQL) · Flyway · Docker · Render · Cloudflare Workers
+
