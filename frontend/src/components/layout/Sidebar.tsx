@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+﻿import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, RefreshCw, CreditCard, Users, Bot, Play,
@@ -71,16 +71,7 @@ export function Sidebar() {
       <div className="h-16 flex items-center px-4 shrink-0 border-b border-[#1D2939] overflow-hidden">
         <div className={cn("flex items-center gap-3 w-[200px] transition-all duration-300", sidebarCollapsed && "translate-x-1.5")}>
           <div className="w-8 h-8 rounded shrink-0 flex items-center justify-center">
-            <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M12.9818 20.3015L3.9037 12.0463L15.3403 9.42398C15.6568 9.3514 15.932 9.1415 16.082 8.85829L20.4727 0.56942L22.6171 10.3752C22.6763 10.6457 22.8465 10.8752 23.0906 11.0135L31.637 15.8569L22.1895 19.5487C21.928 19.6509 21.724 19.8601 21.6242 20.1287L17.7818 30.4632L14.7368 21.0594C14.6527 20.8002 14.4532 20.596 14.1952 20.5056L12.9818 20.3015ZM26.7909 25.1384L34.1979 28.375L27.601 32.3276C27.4189 32.4367 27.2798 32.6111 27.208 32.819L24.6225 40.3204L23.3323 32.5517C23.2966 32.3367 23.1611 32.1469 22.9646 32.036L19.4674 30.0619L25.1843 27.8288C25.3421 27.7672 25.467 27.6397 25.523 27.4827L28.1691 20.0617L26.7909 25.1384Z" fill="url(#paint0_linear_logo)"/>
-              <defs>
-                <linearGradient id="paint0_linear_logo" x1="4.5" y1="5" x2="35" y2="38" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#2B84EA" />
-                  <stop offset="0.5" stopColor="#E08B3E" />
-                  <stop offset="1" stopColor="#3069C7" />
-                </linearGradient>
-              </defs>
-            </svg>
+            <img src="/logo.png" alt="Zoqel Logo" className="w-7 h-7 object-contain" />
           </div>
           <motion.div 
             initial={false}
@@ -244,3 +235,4 @@ export function Sidebar() {
     </aside>
   );
 }
+

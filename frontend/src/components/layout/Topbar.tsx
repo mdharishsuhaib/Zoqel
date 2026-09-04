@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+﻿import { useState, useRef, useEffect } from 'react';
 import { Search, Bell, Activity, X, LogOut, ShieldAlert } from 'lucide-react';
 import { useUIStore } from '../../stores/uiStore';
 import { useQuery } from '@tanstack/react-query';
@@ -53,14 +53,19 @@ export function Topbar() {
     navigate('/');
   };
 
-  const getInitials = (name?: string) => {
+  const getInitials = (name?: string, email?: string) => {
     if (mode === 'DEMO') return 'DM';
-    if (!name) return 'DE';
-    const words = name.trim().split(/\s+/);
-    return words.map(w => w[0].toUpperCase()).join('').substring(0, 3);
+    if (name && name.trim().length > 0) {
+      const words = name.trim().split(/\s+/);
+      return words.map(w => w[0].toUpperCase()).join('').substring(0, 2);
+    }
+    if (email && email.trim().length > 0) {
+      return email.substring(0, 2).toUpperCase();
+    }
+    return 'US';
   };
 
-  const initials = getInitials(user?.fullName);
+  const initials = getInitials(user?.fullName, user?.email);
   const displayName = mode === 'DEMO' ? 'Demo Merchant' : user?.fullName || 'Zoqel User';
   const displayEmail = mode === 'DEMO' ? 'demo@zoqel.ai' : user?.email || '';
 
@@ -189,3 +194,5 @@ export function Topbar() {
     </header>
   );
 }
+
+
