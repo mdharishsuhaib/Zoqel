@@ -8,10 +8,7 @@ import { MetricCardSkeleton } from '../../components/ui/LoadingSkeleton';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { formatLakhsSymbol } from '../../utils/format';
 import { getAuditEvents } from '../../services/auditService';
-
 import { StatusBadge } from '../../components/ui/StatusBadge';
-
-
 
 export function OverviewPage() {
   const [timeRange, setTimeRange] = useState<'30D' | '7D'>('30D');
@@ -34,7 +31,7 @@ export function OverviewPage() {
         subtitle="Closing the loop: from detecting payment degrades and abandoned checkouts, to diagnosing failed subscriptions and recovering overdue receivables." 
       />
       
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {isMetricsLoading ? (
           Array.from({ length: 4 }).map((_, i) => <MetricCardSkeleton key={i} />)
         ) : isMetricsError ? (
@@ -46,10 +43,10 @@ export function OverviewPage() {
           ))
         ) : (
           <>
-            <MetricCard title="Revenue at Risk" value={formatLakhsSymbol(metrics?.revenueAtRiskPaise || 0)} accent="danger" subtitle={`Last ${timeRange}`} />
+            <MetricCard title="Revenue at Risk" value={formatLakhsSymbol(metrics?.revenueAtRiskPaise || 0)} accent="danger" subtitle={Last  + timeRange} />
             <MetricCard title="Recoverable Revenue" value={formatLakhsSymbol((metrics?.recoverableRevenuePaise || 0))} accent="blue" subtitle="Estimated by Zoqel" />
             <MetricCard title="Revenue Recovered" value={formatLakhsSymbol((metrics?.revenueRecoveredPaise || 0))} accent="success" subtitle="Successfully completed" />
-            <MetricCard title="Recovery Rate" value={`${Number((metrics?.recoveryRate || 0)).toFixed(1)}%`} accent="violet" subtitle="Of recoverable revenue" trend={{ value: '+2.1%', positive: true }} />
+            <MetricCard title="Recovery Rate" value={${Number((metrics?.recoveryRate || 0)).toFixed(1)}%} accent="violet" subtitle="Of recoverable revenue" trend={{ value: '+2.1%', positive: true }} />
           </>
         )}
       </div>
@@ -60,13 +57,13 @@ export function OverviewPage() {
           <div className="flex gap-2">
             <button 
               onClick={() => setTimeRange('30D')}
-              className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${timeRange === '30D' ? 'bg-[#F2F4F7] text-[#101828]' : 'text-[#667085] hover:bg-[#F9FAFB]'}`}
+              className={px-3 py-1 text-sm rounded-md font-medium transition-colors }
             >
               30D
             </button>
             <button 
               onClick={() => setTimeRange('7D')}
-              className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${timeRange === '7D' ? 'bg-[#F2F4F7] text-[#101828]' : 'text-[#667085] hover:bg-[#F9FAFB]'}`}
+              className={px-3 py-1 text-sm rounded-md font-medium transition-colors }
             >
               7D
             </button>
@@ -109,35 +106,15 @@ export function OverviewPage() {
               </thead>
               <tbody>
                 {recentTx.map(t => (
-                  <React.Fragment key={t.id}>
-                    <tr 
-                      onClick={() => setExpandedRow(expandedRow === t.id ? null : t.id)}
-                      className="border-b border-[#F2F4F7] last:border-0 cursor-pointer hover:bg-[#F9FAFB] transition-colors"
-                    >
-                      <td className="py-3 text-[#101828] font-medium flex items-center gap-2">
-                        {expandedRow === t.id ? <ChevronUp size={16} className="text-[#98A2B3]" /> : <ChevronDown size={16} className="text-[#98A2B3]" />}
-                        {t.id}
-                      </td>
-                      <td className="py-3 text-[#475467]">{formatLakhsSymbol(t.amountPaise)}</td>
-                      <td className="py-3"><StatusBadge status={t.status} /></td>
-                    </tr>
-                    <AnimatePresence>
-                      {expandedRow === t.id && (
-                        <tr>
-                          <td colSpan={3} className="p-0 border-b border-[#F2F4F7]">
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              className="overflow-hidden bg-[#F9FAFB]"
-                            >
-                              <PipelineVisual />
-                            </motion.div>
-                          </td>
-                        </tr>
-                      )}
-                    </AnimatePresence>
-                  </React.Fragment>
+                  <tr 
+                    key={t.id}
+                    onClick={() => navigate('/app/payments/' + t.id)}
+                    className="border-b border-[#F2F4F7] last:border-0 cursor-pointer hover:bg-[#F9FAFB] transition-colors"
+                  >
+                    <td className="py-3 text-[#101828] font-medium">{t.id}</td>
+                    <td className="py-3 text-[#475467]">{formatLakhsSymbol(t.amountPaise)}</td>
+                    <td className="py-3"><StatusBadge status={t.status} /></td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -162,12 +139,3 @@ export function OverviewPage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
