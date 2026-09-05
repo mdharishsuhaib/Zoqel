@@ -97,11 +97,11 @@ More important than ML metrics for Razorpay's evaluation:
 
 | Metric | Definition |
 |---|---|
-| **Revenue at Risk (â‚¹)** | Total amount of all failed transactions evaluated |
-| **Truly Recoverable (â‚¹)** | Amount that was actually recoverable (ground truth) |
-| **Revenue Recovered (â‚¹)** | Amount from transactions where Zoqel correctly predicted and executed recovery |
-| **Revenue Missed (â‚¹)** | Amount from false negatives (recoverable, but Zoqel predicted not) |
-| **False Intervention Cost (â‚¹)** | Amount from false positives (not recoverable, but Zoqel tried) |
+| **Revenue at Risk (INR )** | Total amount of all failed transactions evaluated |
+| **Truly Recoverable (INR )** | Amount that was actually recoverable (ground truth) |
+| **Revenue Recovered (INR )** | Amount from transactions where Zoqel correctly predicted and executed recovery |
+| **Revenue Missed (INR )** | Amount from false negatives (recoverable, but Zoqel predicted not) |
+| **False Intervention Cost (INR )** | Amount from false positives (not recoverable, but Zoqel tried) |
 | **Recovery Rate** | Revenue Recovered / Truly Recoverable |
 
 ---
@@ -110,12 +110,12 @@ More important than ML metrics for Razorpay's evaluation:
 
 Unlike most ML problems, Zoqel's false positives have a real cost:
 
-- **True Positive**: +â‚¹amount recovered
+- **True Positive**: +INR amount recovered
 - **False Positive**: Intervention attempt on an unrecoverable transaction
   (operational cost, potential customer friction)
-- **False Negative**: â‚¹amount permanently lost
+- **False Negative**: INR amount permanently lost
 
-The evaluation explicitly reports the â‚¹ value tied to false positives (see `revenue_falsely_intervened_paise`)
+The evaluation explicitly reports the INR  value tied to false positives (see `revenue_falsely_intervened_paise`)
 so the cost is visible, not hidden.
 
 ---

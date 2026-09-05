@@ -11,8 +11,8 @@ export function LandingPage() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const whyZoqelSection = document.getElementById('comparison');
-      if (whyZoqelSection && window.scrollY >= whyZoqelSection.offsetTop - 150) {
+      const aiEngineSection = document.getElementById('ai-engine');
+      if (aiEngineSection && window.scrollY >= aiEngineSection.offsetTop - 150) {
         setShowScrollTop(true);
       } else {
         setShowScrollTop(false);
@@ -141,7 +141,7 @@ export function LandingPage() {
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="bg-white p-5 rounded-xl border border-[#E4E7EC] shadow-sm">
                 <div className="text-sm text-[#667085] mb-2">Revenue at Risk</div>
-                <div className="text-2xl font-bold text-[#101828]">â‚¹12.4L</div>
+                <div className="text-2xl font-bold text-[#101828]">INR 12.4L</div>
               </div>
               <div className="bg-white p-5 rounded-xl border border-[#E4E7EC] shadow-sm border-l-4 border-l-[#3B82F6]">
                 <div className="text-sm text-[#667085] mb-2">Recovery Rate</div>
@@ -149,7 +149,7 @@ export function LandingPage() {
               </div>
               <div className="bg-white p-5 rounded-xl border border-[#E4E7EC] shadow-sm border-l-4 border-l-success">
                 <div className="text-sm text-[#667085] mb-2">Recovered Revenue</div>
-                <div className="text-2xl font-bold text-success">â‚¹8.7L</div>
+                <div className="text-2xl font-bold text-success">INR 8.7L</div>
               </div>
             </div>
 
@@ -256,7 +256,7 @@ export function LandingPage() {
               <h4 className="text-[#8B5CF6] font-bold text-xs uppercase tracking-widest mb-4">AI Diagnosis</h4>
               <div className="space-y-3 font-mono text-sm text-[#D1D5DB]">
                 <div className="flex justify-between border-b border-[#374151] pb-2"><span>Failure Type:</span><span className="text-white">Soft Decline</span></div>
-                <div className="flex justify-between border-b border-[#374151] pb-2"><span>Customer Risk:</span><span className="text-success">Low (LTV: â‚¹1.2L)</span></div>
+                <div className="flex justify-between border-b border-[#374151] pb-2"><span>Customer Risk:</span><span className="text-success">Low (LTV: INR 1.2L)</span></div>
                 <div className="flex justify-between border-b border-[#374151] pb-2"><span>Historical Success:</span><span className="text-white">High on day 3</span></div>
                 <div className="flex justify-between pt-1"><span>Probability:</span><span className="text-[#2B84EA] font-bold text-lg">87%</span></div>
               </div>
@@ -410,4 +410,6 @@ export function LandingPage() {
     </div>
   );
 }
+
+
 
