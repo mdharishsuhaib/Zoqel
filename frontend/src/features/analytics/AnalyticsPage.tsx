@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+﻿import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { REAL_ML_METRICS, REAL_BUSINESS_METRICS, RECOVERY_OUTCOMES_DATA, FAILURE_REASON_DATA } from '../../data/analytics';
 import { formatLakhsSymbol } from '../../utils/format';
@@ -15,7 +15,7 @@ export function AnalyticsPage() {
 
       <section>
         <h2 className="text-lg font-semibold text-[#101828] mb-4">ML Model Performance</h2>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: 'Precision', value: REAL_ML_METRICS.precision, color: '#2B84EA' },
             { label: 'Recall', value: REAL_ML_METRICS.recall, color: '#3B82F6' },
@@ -35,7 +35,7 @@ export function AnalyticsPage() {
 
       <section>
         <h2 className="text-lg font-semibold text-[#101828] mb-4">Business Impact</h2>
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="bg-[#111827] text-white p-6 rounded-xl border border-[#1D2939] shadow-card col-span-1 flex flex-col justify-center text-center">
             <div className="text-[13px] font-semibold text-[#9CA3AF] uppercase tracking-wide mb-2">Revenue Recovered</div>
             <div className="text-5xl font-bold text-success mb-2 tabular-nums">{formatLakhsSymbol(REAL_BUSINESS_METRICS.revenueRecoveredPaise)}</div>
@@ -63,7 +63,7 @@ export function AnalyticsPage() {
         </div>
       </section>
 
-      <section className="grid grid-cols-2 gap-6">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-xl border border-[#E4E7EC] shadow-card">
           <h2 className="text-[15px] font-semibold text-[#101828] mb-6">Recovery Outcomes Distribution</h2>
           <div className="h-64 flex items-center">
@@ -109,3 +109,4 @@ export function AnalyticsPage() {
     </div>
   );
 }
+

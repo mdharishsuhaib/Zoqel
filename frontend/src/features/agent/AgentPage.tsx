@@ -59,7 +59,7 @@ export function AgentPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
         <div className="col-span-3 bg-white rounded-xl border border-[#E4E7EC] shadow-card flex flex-col h-[700px]">
           <div className="p-5 border-b border-[#E4E7EC] flex items-center justify-between">
             <h2 className="text-[15px] font-semibold text-[#101828]">Agent Reasoning Feed</h2>
@@ -109,6 +109,7 @@ export function AgentPage() {
     </div>
   );
 }
+
 
 
 

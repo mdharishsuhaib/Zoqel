@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '../../components/ui/PageHeader';
@@ -37,7 +37,7 @@ export function PaymentsPage() {
     <div className="space-y-6">
       <PageHeader title="Payments" subtitle="All transaction history" />
       
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard title="Total Volume" value="10,000" accent="black" />
         <MetricCard title="Successful" value="8,500" accent="success" />
         <MetricCard title="Failed" value="1,500" accent="danger" />
@@ -91,7 +91,7 @@ export function PaymentsPage() {
                     <td className="px-6 py-4">{t.customer.name}</td>
                     <td className="px-6 py-4">{t.paymentMethod}</td>
                     <td className="px-6 py-4"><StatusBadge status={t.status} /></td>
-                    <td className="px-6 py-4 text-[#667085]">{t.failureReason ? getFailureReasonLabel(t.failureReason) : '—'}</td>
+                    <td className="px-6 py-4 text-[#667085]">{t.failureReason ? getFailureReasonLabel(t.failureReason) : 'â€”'}</td>
                     <td className="px-6 py-4 text-[#667085]">{formatDateTime(t.createdAt)}</td>
                   </tr>
                 ))
@@ -103,3 +103,4 @@ export function PaymentsPage() {
     </div>
   );
 }
+

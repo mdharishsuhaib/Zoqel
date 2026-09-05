@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { formatLakhsSymbol } from '../../utils/format';
 
@@ -31,7 +31,7 @@ export function ProofModePage() {
 
       {/* Key metrics */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-        className="grid grid-cols-3 gap-12 mb-12 text-center"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-12 mb-12 text-center"
       >
         <div>
           <div className="text-5xl font-bold text-success tabular-nums mb-2">{formatLakhsSymbol(53971420)}</div>
@@ -61,12 +61,12 @@ export function ProofModePage() {
 
       {/* Two scenarios */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
-        className="grid grid-cols-2 gap-8 mb-12 w-full max-w-2xl"
+        className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-12 w-full max-w-2xl"
       >
         {/* Scenario A */}
         <div className="border border-[#1D2939] rounded-xl p-6">
-          <div className="text-[#2B84EA] text-xs font-semibold uppercase tracking-wide mb-4">Scenario A — Successful Recovery</div>
-          <div className="text-sm text-[#9CA3AF] mb-3">TXN-91823 · INR 4,999 · BANK_TIMEOUT</div>
+          <div className="text-[#2B84EA] text-xs font-semibold uppercase tracking-wide mb-4">Scenario A â€” Successful Recovery</div>
+          <div className="text-sm text-[#9CA3AF] mb-3">TXN-91823 Â· INR 4,999 Â· BANK_TIMEOUT</div>
           <div className="space-y-1 text-sm">
             {['FAILED', 'AI DIAGNOSIS', 'POLICY APPROVED', 'RETRY', 'SUCCESS'].map((s, i) => (
               <div key={i} className="flex items-center gap-2">
@@ -79,8 +79,8 @@ export function ProofModePage() {
         </div>
         {/* Scenario B */}
         <div className="border border-[#1D2939] rounded-xl p-6">
-          <div className="text-warning text-xs font-semibold uppercase tracking-wide mb-4">Scenario B — Graceful Block</div>
-          <div className="text-sm text-[#9CA3AF] mb-3">TXN-82193 · INR 27,500 · REPEATED_FAILURE</div>
+          <div className="text-warning text-xs font-semibold uppercase tracking-wide mb-4">Scenario B â€” Graceful Block</div>
+          <div className="text-sm text-[#9CA3AF] mb-3">TXN-82193 Â· INR 27,500 Â· REPEATED_FAILURE</div>
           <div className="space-y-1 text-sm">
             {['FAILED', 'AI DIAGNOSIS', 'POLICY BLOCKED', 'HUMAN REVIEW'].map((s, i) => (
               <div key={i} className="flex items-center gap-2">
@@ -89,7 +89,7 @@ export function ProofModePage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 text-warning text-sm">No automatic action — safe escalation</div>
+          <div className="mt-4 text-warning text-sm">No automatic action â€” safe escalation</div>
         </div>
       </motion.div>
 
@@ -109,3 +109,4 @@ export function ProofModePage() {
     </div>
   );
 }
+

@@ -34,7 +34,7 @@ export function OverviewPage() {
         subtitle="Closing the loop: from detecting payment degrades and abandoned checkouts, to diagnosing failed subscriptions and recovering overdue receivables." 
       />
       
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {isMetricsLoading ? (
           Array.from({ length: 4 }).map((_, i) => <MetricCardSkeleton key={i} />)
         ) : isMetricsError ? (
@@ -95,7 +95,7 @@ export function OverviewPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl border border-[#E4E7EC] p-6 shadow-card">
           <h2 className="text-lg font-semibold text-[#101828] mb-4">Recent Recovery Queue</h2>
           <div className="overflow-x-auto">
@@ -162,6 +162,7 @@ export function OverviewPage() {
     </div>
   );
 }
+
 
 
 

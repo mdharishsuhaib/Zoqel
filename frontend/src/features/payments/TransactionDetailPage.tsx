@@ -39,7 +39,7 @@ export function TransactionDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="col-span-2 space-y-6">
           <div className="bg-white rounded-xl border border-[#E4E7EC] shadow-card p-6">
             <h2 className="text-lg font-semibold text-[#101828] mb-6">Recovery Pipeline</h2>
@@ -107,3 +107,4 @@ export function TransactionDetailPage() {
     </div>
   );
 }
+

@@ -1,5 +1,5 @@
-﻿import { useState, useRef, useEffect } from 'react';
-import { Search, Bell, Activity, X, LogOut, ShieldAlert } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Search, Bell, Activity, X, LogOut, ShieldAlert, Menu } from 'lucide-react';
 import { useUIStore } from '../../stores/uiStore';
 import { useQuery } from '@tanstack/react-query';
 import { getRecentAuditEvents } from '../../services/recoveryService';
@@ -9,7 +9,7 @@ import { useAuth } from '../../features/auth/AuthContext';
 
 export function Topbar() {
   const navigate = useNavigate();
-  const { setCommandPaletteOpen } = useUIStore();
+  const { setCommandPaletteOpen, setSidebarMobileOpen } = useUIStore();
   const { mode, user, logout } = useAuth();
   
   const [isOpen, setIsOpen] = useState(false);
@@ -70,15 +70,24 @@ export function Topbar() {
   const displayEmail = mode === 'DEMO' ? 'demo@zoqel.ai' : user?.email || '';
 
   return (
-    <header className="h-16 bg-white border-b border-[#E4E7EC] flex items-center px-6 gap-4 shrink-0 relative z-50">
-      {/* Search */}
+    <header className="h-16 bg-white border-b border-[#E4E7EC] flex items-center px-3 sm:px-6 gap-2 sm:gap-4 shrink-0 relative z-50">
+      {/* Mobile hamburger — hidden on md+ */}
+      <button
+        onClick={() => setSidebarMobileOpen(true)}
+        className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[#F2F4F7] text-[#344054] shrink-0"
+        aria-label="Open navigation menu"
+      >
+        <Menu size={20} />
+      </button>
+
+      {/* Search — icon-only on mobile, full pill on sm+ */}
       <button
         onClick={() => setCommandPaletteOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#E4E7EC] text-[#98A2B3] text-sm hover:border-[#D0D5DD] hover:bg-[#F9FAFB] transition-all w-64"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#E4E7EC] text-[#98A2B3] text-sm hover:border-[#D0D5DD] hover:bg-[#F9FAFB] transition-all w-9 sm:w-64 justify-center sm:justify-start"
       >
         <Search size={14} />
-        <span>Search... </span>
-        <span className="ml-auto text-[11px] font-mono bg-[#F2F4F7] px-1.5 py-0.5 rounded text-[#667085]">Ctrl+K</span>
+        <span className="hidden sm:inline">Search... </span>
+        <span className="hidden sm:inline ml-auto text-[11px] font-mono bg-[#F2F4F7] px-1.5 py-0.5 rounded text-[#667085]">Ctrl+K</span>
       </button>
 
       <div className="flex-1" />
@@ -110,7 +119,7 @@ export function Topbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
-              className="absolute right-0 mt-2 w-[380px] bg-white rounded-xl shadow-[0_12px_32px_-12px_rgba(0,0,0,0.2)] border border-[#E4E7EC] overflow-hidden"
+              className="absolute right-0 mt-2 w-[calc(100vw-2rem)] max-w-[380px] bg-white rounded-xl shadow-[0_12px_32px_-12px_rgba(0,0,0,0.2)] border border-[#E4E7EC] overflow-hidden"
             >
               <div className="px-4 py-3 border-b border-[#E4E7EC] bg-[#F9FAFB] flex items-center justify-between">
                 <h3 className="font-semibold text-[#101828] text-sm flex items-center gap-2">

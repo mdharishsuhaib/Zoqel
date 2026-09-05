@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { ShieldCheck, Server, Save, Loader2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -87,7 +87,7 @@ export function SettingsPage() {
               <strong>Demo Mode:</strong> Policy configuration is locked. Sign up for a full account to customize these rules.
             </div>
           )}
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <label className="block text-sm font-semibold text-[#344054] mb-1">Max Auto-Recovery Amount (Paise)</label>
               <div className="text-xs text-[#667085] mb-2">Transactions above this amount require human review.</div>
@@ -161,3 +161,4 @@ export function SettingsPage() {
     </div>
   );
 }
+

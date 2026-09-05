@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { getTransactions, getRecoveryCase } from '../../services/recoveryService';
@@ -63,7 +63,7 @@ export function HumanReviewPage() {
           <span className="text-[#B54708] font-mono text-sm">{formatTxnId(currentTxn.id)}</span>
         </div>
         <div className="p-6">
-          <div className="grid grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <div>
               <h3 className="text-sm font-semibold text-[#667085] uppercase tracking-wide mb-4">Context</h3>
               <div className="space-y-3 text-sm">
@@ -108,3 +108,4 @@ export function HumanReviewPage() {
     </div>
   );
 }
+
