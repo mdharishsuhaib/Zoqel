@@ -91,7 +91,7 @@ export function PaymentsPage() {
                     <td className="px-6 py-4">{t.customer.name}</td>
                     <td className="px-6 py-4">{t.paymentMethod}</td>
                     <td className="px-6 py-4"><StatusBadge status={t.status} /></td>
-                    <td className="px-6 py-4 text-[#667085]">{t.failureReason ? getFailureReasonLabel(t.failureReason) : 'â€”'}</td>
+                    <td className="px-6 py-4 text-[#667085]">{t.failureReason ? getFailureReasonLabel(t.failureReason) : '-'}</td>
                     <td className="px-6 py-4 text-[#667085]">{formatDateTime(t.createdAt)}</td>
                   </tr>
                 ))

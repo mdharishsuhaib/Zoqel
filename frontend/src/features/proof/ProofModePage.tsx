@@ -65,7 +65,7 @@ export function ProofModePage() {
       >
         {/* Scenario A */}
         <div className="border border-[#1D2939] rounded-xl p-6">
-          <div className="text-[#2B84EA] text-xs font-semibold uppercase tracking-wide mb-4">Scenario A â€” Successful Recovery</div>
+          <div className="text-[#2B84EA] text-xs font-semibold uppercase tracking-wide mb-4">Scenario A - Successful Recovery</div>
           <div className="text-sm text-[#9CA3AF] mb-3">TXN-91823 Â· INR 4,999 Â· BANK_TIMEOUT</div>
           <div className="space-y-1 text-sm">
             {['FAILED', 'AI DIAGNOSIS', 'POLICY APPROVED', 'RETRY', 'SUCCESS'].map((s, i) => (
@@ -79,7 +79,7 @@ export function ProofModePage() {
         </div>
         {/* Scenario B */}
         <div className="border border-[#1D2939] rounded-xl p-6">
-          <div className="text-warning text-xs font-semibold uppercase tracking-wide mb-4">Scenario B â€” Graceful Block</div>
+          <div className="text-warning text-xs font-semibold uppercase tracking-wide mb-4">Scenario B - Graceful Block</div>
           <div className="text-sm text-[#9CA3AF] mb-3">TXN-82193 Â· INR 27,500 Â· REPEATED_FAILURE</div>
           <div className="space-y-1 text-sm">
             {['FAILED', 'AI DIAGNOSIS', 'POLICY BLOCKED', 'HUMAN REVIEW'].map((s, i) => (
@@ -89,7 +89,7 @@ export function ProofModePage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 text-warning text-sm">No automatic action â€” safe escalation</div>
+          <div className="mt-4 text-warning text-sm">No automatic action - safe escalation</div>
         </div>
       </motion.div>
 

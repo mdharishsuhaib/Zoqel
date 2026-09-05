@@ -63,7 +63,7 @@ To help judges evaluate this submission against the Track 03 criteria, here is e
 - **Problem Taste & Engineering Maturity** â†’ [`docs/design-decisions.md`](docs/design-decisions.md) (Explains our real-world trade-offs: paise-as-integer, deterministic simulation over mock APIs, LLM-recommends vs Engine-authorizes)
 - **AI Judgment & Boundary Enforcement** â†’ [`backend/src/main/java/com/zoqel/policy/PolicyEngine.java`](backend/src/main/java/com/zoqel/policy/PolicyEngine.java) (The deterministic layer that blocks the LLM on insufficient funds, enforces max retries, and handles escalation)
 - **Measured Money Recovered (Build Quality)** â†’ [`evaluation/report.txt`](evaluation/report.txt) and [`docs/evaluation.md`](docs/evaluation.md) (Real ML metrics proving â‚¹54L recovered out of â‚¹60L)
-- **Failure Recovery** â†’ [`docs/failure-analysis.md`](docs/failure-analysis.md) (Documentation of 6 critical bugs we hit during developmentâ€”like idempotent retries and N+1 queriesâ€”and exactly how we fixed them)
+- **Failure Recovery** â†’ [`docs/failure-analysis.md`](docs/failure-analysis.md) (Documentation of 6 critical bugs we hit during development-like idempotent retries and N+1 queries-and exactly how we fixed them)
 
 ---
 
@@ -466,7 +466,7 @@ mvn test
 
 ### CORS error in the browser console
 
-`Access-Control-Allow-Origin` header missing â€” The `FRONTEND_URL` environment variable on
+`Access-Control-Allow-Origin` header missing - The `FRONTEND_URL` environment variable on
 the backend either isn't set or doesn't exactly match the frontend's origin. Ensure there
 is **no trailing slash** (e.g., `http://localhost:5173`).
 

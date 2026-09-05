@@ -22,7 +22,7 @@ export function SimulatorPage() {
               className={`w-full text-left p-5 rounded-xl border-2 transition-all ${scenario === 'success' ? 'border-[#2B84EA] bg-[#2B84EA]/5' : 'border-[#E4E7EC] hover:border-[#D0D5DD]'}`}
             >
               <div className="flex justify-between items-start mb-2">
-                <span className="font-semibold text-[#101828]">Scenario A â€” Successful Recovery</span>
+                <span className="font-semibold text-[#101828]">Scenario A - Successful Recovery</span>
                 {scenario === 'success' && <CheckCircle2 className="text-[#2B84EA]" size={20} />}
               </div>
               <div className="text-sm text-[#667085] space-y-1">
@@ -35,7 +35,7 @@ export function SimulatorPage() {
               className={`w-full text-left p-5 rounded-xl border-2 transition-all ${scenario === 'blocked' ? 'border-warning bg-warning/5' : 'border-[#E4E7EC] hover:border-[#D0D5DD]'}`}
             >
               <div className="flex justify-between items-start mb-2">
-                <span className="font-semibold text-[#101828]">Scenario B â€” Graceful Block</span>
+                <span className="font-semibold text-[#101828]">Scenario B - Graceful Block</span>
                 {scenario === 'blocked' && <CheckCircle2 className="text-warning" size={20} />}
               </div>
               <div className="text-sm text-[#667085] space-y-1">
