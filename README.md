@@ -484,8 +484,8 @@ Check the backend logs to ensure Flyway successfully migrated the Supabase datab
 
 ## Tech Stack
 
-React 18 Â· TypeScript Â· Tailwind CSS Â· Vite Â· Zustand Â· Java 21 Â· Spring Boot 3 Â·
-Spring Security Â· Supabase (PostgreSQL) Â· Flyway Â· Docker Â· Render Â· Cloudflare Workers
+React 18 · TypeScript · Tailwind CSS · Vite · Zustand · Java 21 · Spring Boot 3 ·
+Spring Security · Supabase (PostgreSQL) · Flyway · Docker · Render · Cloudflare Workers
 
 
 

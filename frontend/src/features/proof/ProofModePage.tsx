@@ -66,7 +66,7 @@ export function ProofModePage() {
         {/* Scenario A */}
         <div className="border border-[#1D2939] rounded-xl p-6">
           <div className="text-[#2B84EA] text-xs font-semibold uppercase tracking-wide mb-4">Scenario A - Successful Recovery</div>
-          <div className="text-sm text-[#9CA3AF] mb-3">TXN-91823 Â· INR 4,999 Â· BANK_TIMEOUT</div>
+          <div className="text-sm text-[#9CA3AF] mb-3">TXN-91823 · INR 4,999 · BANK_TIMEOUT</div>
           <div className="space-y-1 text-sm">
             {['FAILED', 'AI DIAGNOSIS', 'POLICY APPROVED', 'RETRY', 'SUCCESS'].map((s, i) => (
               <div key={i} className="flex items-center gap-2">
@@ -80,7 +80,7 @@ export function ProofModePage() {
         {/* Scenario B */}
         <div className="border border-[#1D2939] rounded-xl p-6">
           <div className="text-warning text-xs font-semibold uppercase tracking-wide mb-4">Scenario B - Graceful Block</div>
-          <div className="text-sm text-[#9CA3AF] mb-3">TXN-82193 Â· INR 27,500 Â· REPEATED_FAILURE</div>
+          <div className="text-sm text-[#9CA3AF] mb-3">TXN-82193 · INR 27,500 · REPEATED_FAILURE</div>
           <div className="space-y-1 text-sm">
             {['FAILED', 'AI DIAGNOSIS', 'POLICY BLOCKED', 'HUMAN REVIEW'].map((s, i) => (
               <div key={i} className="flex items-center gap-2">

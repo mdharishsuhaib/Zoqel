@@ -26,8 +26,8 @@ export function SimulatorPage() {
                 {scenario === 'success' && <CheckCircle2 className="text-[#2B84EA]" size={20} />}
               </div>
               <div className="text-sm text-[#667085] space-y-1">
-                <div>TXN-91823 Â· INR 4,999</div>
-                <div>BANK_TIMEOUT Â· Recovery Prob: 87%</div>
+                <div>TXN-91823 · INR 4,999</div>
+                <div>BANK_TIMEOUT · Recovery Prob: 87%</div>
               </div>
             </button>
 
@@ -39,8 +39,8 @@ export function SimulatorPage() {
                 {scenario === 'blocked' && <CheckCircle2 className="text-warning" size={20} />}
               </div>
               <div className="text-sm text-[#667085] space-y-1">
-                <div>TXN-82193 Â· INR 27,500</div>
-                <div>REPEATED_FAILURE Â· Recovery Prob: 42%</div>
+                <div>TXN-82193 · INR 27,500</div>
+                <div>REPEATED_FAILURE · Recovery Prob: 42%</div>
               </div>
             </button>
           </div>
