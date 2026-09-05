@@ -7,7 +7,7 @@
 
 **Autonomous AI Payment Recovery Agent for Razorpay**
 
-**Live Demo:** [https://oqel.pages.dev](https://oqel.pages.dev)
+**Live Demo:** [https://zoqel.mdharishsuhaib.workers.dev](https://zoqel.mdharishsuhaib.workers.dev)
 
 [![GitHub Stars](https://img.shields.io/github/stars/mdharishsuhaib/Zoqel?style=flat-square&logo=github&color=1f6feb&label=stars)](https://github.com/mdharishsuhaib/Zoqel/stargazers) [![GitHub Forks](https://img.shields.io/github/forks/mdharishsuhaib/Zoqel?style=flat-square&logo=github&color=f0883e&label=forks)](https://github.com/mdharishsuhaib/Zoqel/network/members)
 
@@ -486,6 +486,7 @@ Check the backend logs to ensure Flyway successfully migrated the Supabase datab
 
 React 18 Â· TypeScript Â· Tailwind CSS Â· Vite Â· Zustand Â· Java 21 Â· Spring Boot 3 Â·
 Spring Security Â· Supabase (PostgreSQL) Â· Flyway Â· Docker Â· Render Â· Cloudflare Workers
+
 
 
 
