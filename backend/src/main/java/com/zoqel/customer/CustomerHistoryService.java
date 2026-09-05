@@ -26,13 +26,18 @@ public class CustomerHistoryService {
 
         for (Transaction t : transactions) {
             totalAmount += t.getAmountPaise();
-            
+
             if (t.getStatus() == TransactionStatus.SUCCESS || t.getStatus() == TransactionStatus.RECOVERED) {
                 successful++;
                 if (lastSuccess == null || t.getInitiatedAt().isAfter(lastSuccess.getInitiatedAt())) {
                     lastSuccess = t;
                 }
-            } else if (t.getStatus() == TransactionStatus.FAILED || t.getStatus() == TransactionStatus.ESCALATED || t.getStatus() == TransactionStatus.IGNORED) {
+            } else if (t.getStatus() == TransactionStatus.FAILED) {
+                // Only count genuine payment failures — NOT IGNORED or ESCALATED.
+                // IGNORED = AI correctly determined not recoverable (e.g. insufficient funds).
+                // ESCALATED = AI correctly routed to human review.
+                // Counting those as "failed payments" inflates the failure count and causes the
+                // PolicyEngine to block all future retries for this customer.
                 failed++;
                 if (lastFail == null || t.getInitiatedAt().isAfter(lastFail.getInitiatedAt())) {
                     lastFail = t;
@@ -40,7 +45,9 @@ public class CustomerHistoryService {
             }
         }
 
-        double rate = total > 0 ? (double) successful / total : 0.0;
+        // Success rate = successful / (successful + genuinely failed). Pending/Ignored/Escalated are excluded.
+        int ratedTotal = successful + failed;
+        double rate = ratedTotal > 0 ? (double) successful / ratedTotal : 0.0;
 
         return CustomerHistory.builder()
                 .customerId(customerId)

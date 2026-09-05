@@ -53,7 +53,7 @@ export function OverviewPage() {
 
       <div className="bg-white rounded-xl border border-[#E4E7EC] p-6 shadow-card">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-[#101828]">Recovery Performance</h2>
+          <h2 className="text-lg font-semibold text-[#101828]">Recovery Performance <span className="text-xs font-normal text-[#98A2B3] ml-2">Daily transaction volumes for selected period</span></h2>
           <div className="flex gap-2">
             <button 
               onClick={() => setTimeRange('30D')}
