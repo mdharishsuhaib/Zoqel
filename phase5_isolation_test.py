@@ -1,5 +1,5 @@
 ﻿"""
-Phase 5 â€” Demo Mode Isolation Validation Matrix
+Phase 5 — Demo Mode Isolation Validation Matrix
 Tests all 15 scenarios from the validation table.
 Run after Render deploys commit a8797bd.
 """
@@ -44,7 +44,7 @@ def section(title):
     print(f"\n{'='*60}\n  {title}\n{'='*60}")
 
 
-# â”€â”€â”€ SETUP: two real users + demo token â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── SETUP: two real users + demo token ──────────────────────────────────────
 section("SETUP: Real users A & B + Demo token")
 
 ts = str(int(time.time()))
@@ -84,27 +84,27 @@ is_demo_flag = demo_data.get("demoMode", False)
 demo_ws = demo_data.get("workspaceId", "?")
 print(f"  Demo:    token OK | workspaceId={demo_ws} | demoMode={is_demo_flag}")
 
-# â”€â”€â”€ TEST 1: Demo token is real and scoped to demo-workspace â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── TEST 1: Demo token is real and scoped to demo-workspace ─────────────────
 section("TEST 1: Demo token gives access to demo-workspace data")
 code, d = req("GET", "/workspaces/me", token=tokenD)
 check("Demo GET /workspaces/me", code, [200], f"workspace={d.get('id','?')}")
 check("Demo workspace is demo-workspace", 200 if d.get("id") == "demo-workspace" else 403, [200])
 check("POST /auth/demo returns demoMode=true", 200 if is_demo_flag else 400, [200])
 
-# â”€â”€â”€ TEST 2: Demo dashboard shows only demo data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── TEST 2: Demo dashboard shows only demo data ─────────────────────────────
 section("TEST 2: Demo dashboard")
 code, m = req("GET", "/dashboard/metrics", token=tokenD)
 check("Demo GET /dashboard/metrics", code, [200], f"recoveryRate={m.get('recoveryRate')}%")
 
-# â”€â”€â”€ TEST 3: Demo write protection â€” policy PUT blocked â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── TEST 3: Demo write protection — policy PUT blocked ──────────────────────
 section("TEST 3: Demo write protection (DemoGuardFilter)")
 code, d = req("PUT", "/policy/max_auto_amount_paise", token=tokenD, body={"value": "999"})
-check("Demo PUT /policy/* blocked â†’ 403", code, [403], f"msg={d.get('message','')[:60]}")
+check("Demo PUT /policy/* blocked → 403", code, [403], f"msg={d.get('message','')[:60]}")
 
 code, d = req("POST", "/workspaces", token=tokenD, body={"name": "Hack", "businessType": "SaaS"})
-check("Demo POST /workspaces blocked â†’ 403", code, [403])
+check("Demo POST /workspaces blocked → 403", code, [403])
 
-# â”€â”€â”€ TEST 4: Demo can still run recovery simulation flow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── TEST 4: Demo can still run recovery simulation flow ─────────────────────
 section("TEST 4: Demo recovery simulation (allowed writes)")
 code, d = req("GET", "/customers?size=1", token=tokenD)
 demo_customers = d.get("content", []) if isinstance(d, dict) else []
@@ -120,17 +120,17 @@ if demo_customers:
 else:
     print("  [SKIP] No customers in demo-workspace yet (background simulator may not have run)")
 
-# â”€â”€â”€ TEST 5: Cross-tenant â€” User B cannot read User A's resources â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-section("TEST 5: User A â†’ User B isolation (authenticated cross-tenant)")
+# ─── TEST 5: Cross-tenant — User B cannot read User A's resources ─────────────
+section("TEST 5: User A → User B isolation (authenticated cross-tenant)")
 code, _ = req("GET", f"/transactions/{tx_id_a}", token=tokenB)
-check("User B GET User A's transaction â†’ 403/404", code, [403, 404])
+check("User B GET User A's transaction → 403/404", code, [403, 404])
 
 code, _ = req("GET", f"/customers/{cust_id_a}", token=tokenB)
-check("User B GET User A's customer â†’ 403/404", code, [403, 404])
+check("User B GET User A's customer → 403/404", code, [403, 404])
 
 if rc_id_a:
     code, _ = req("GET", f"/recovery/{rc_id_a}", token=tokenB)
-    check("User B GET User A's recovery case â†’ 403/404", code, [403, 404])
+    check("User B GET User A's recovery case → 403/404", code, [403, 404])
 
 code, audit_b = req("GET", "/audit?size=50", token=tokenB)
 events_b = audit_b.get("content", []) if isinstance(audit_b, dict) else []
@@ -139,35 +139,35 @@ check("User B audit does NOT contain User A events", 200 if not leaked else 403,
       f"leaked={len(leaked)} events")
 
 code, m_b = req("GET", "/dashboard/metrics", token=tokenB)
-check("User B dashboard â†’ 200 (own workspace only)", code, [200])
+check("User B dashboard → 200 (own workspace only)", code, [200])
 # User B has no transactions so their recovered should be 0
 recovered_b = m_b.get("revenueRecoveredPaise", 0) if isinstance(m_b, dict) else 0
 # User A recovered 100000 paise; if it leaks into B's dashboard that's a failure
 check("User B dashboard has no User A revenue", 200 if recovered_b == 0 else 403, [200],
       f"B.revenueRecoveredPaise={recovered_b}")
 
-# â”€â”€â”€ TEST 6: Demo token cannot read User A's private data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── TEST 6: Demo token cannot read User A's private data ─────────────────────
 section("TEST 6: Demo token cannot access real user workspace data")
 code, _ = req("GET", f"/transactions/{tx_id_a}", token=tokenD)
-check("Demo GET User A's transaction â†’ 403/404", code, [403, 404])
+check("Demo GET User A's transaction → 403/404", code, [403, 404])
 
 code, _ = req("GET", f"/customers/{cust_id_a}", token=tokenD)
-check("Demo GET User A's customer â†’ 403/404", code, [403, 404])
+check("Demo GET User A's customer → 403/404", code, [403, 404])
 
-# â”€â”€â”€ TEST 7: Demo account cannot be registered via normal signup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── TEST 7: Demo account cannot be registered via normal signup ──────────────
 section("TEST 7: demo@zoqel.internal is reserved")
 code, d = req("POST", "/auth/register", body={"fullName": "X", "email": "demo@zoqel.internal", "password": "x"})
-check("Register demo@zoqel.internal â†’ 403/409", code, [403, 409], f"msg={d[:80] if isinstance(d,str) else ''}")
+check("Register demo@zoqel.internal → 403/409", code, [403, 409], f"msg={d[:80] if isinstance(d,str) else ''}")
 
 code, d = req("POST", "/auth/login", body={"email": "demo@zoqel.internal", "password": "anything"})
-check("Login as demo@zoqel.internal â†’ 403", code, [403])
+check("Login as demo@zoqel.internal → 403", code, [403])
 
-# â”€â”€â”€ TEST 8: Logout clears demo state completely (token test) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── TEST 8: Logout clears demo state completely (token test) ─────────────────
 section("TEST 8: Expired / tampered demo token rejected")
 code, _ = req("GET", "/workspaces/me", token="Bearer invalidtoken.abc.xyz")
-check("Invalid JWT â†’ 401", code, [401])
+check("Invalid JWT → 401", code, [401])
 
-# â”€â”€â”€ SUMMARY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── SUMMARY ──────────────────────────────────────────────────────────────────
 section("SUMMARY")
 total = len(PASS) + len(FAIL)
 print(f"\n  PASSED: {len(PASS)}/{total}")

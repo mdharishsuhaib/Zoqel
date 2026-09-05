@@ -15,7 +15,7 @@ def fix_corrupted_chars():
                 content = f.read()
             
             # The exact corrupted sequence
-            corrupted = "â€”"
+            corrupted = "—"
             
             if corrupted in content:
                 content = content.replace(corrupted, "-")

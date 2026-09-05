@@ -50,10 +50,10 @@ The classes where the model is aggressive (BANK_TIMEOUT recall=1.00, NETWORK_ERR
 ### Split
 ```
 10,000 transactions
-       â”‚
-       â”œâ”€â”€ 70%  (7,000)  â†’ transactions_train.csv   [model training]
-       â”œâ”€â”€ 15%  (1,500)  â†’ transactions_val.csv     [hyperparameter tuning]
-       â””â”€â”€ 15%  (1,500)  â†’ transactions_test.csv    [HELD-OUT - final evaluation only]
+       │
+       ├── 70%  (7,000)  → transactions_train.csv   [model training]
+       ├── 15%  (1,500)  → transactions_val.csv     [hyperparameter tuning]
+       └── 15%  (1,500)  → transactions_test.csv    [HELD-OUT - final evaluation only]
 ```
 
 The test set is loaded once - in `evaluate.py` - and never used during training.
@@ -126,9 +126,9 @@ The optimal threshold for Zoqel is not the one that maximizes F1.
 It is the one that maximizes:
 
 ```
-Expected Value = P(TP) Ã— Revenue_Recovered
-               - P(FP) Ã— Intervention_Cost
-               - P(FN) Ã— Revenue_Lost
+Expected Value = P(TP) × Revenue_Recovered
+               - P(FP) × Intervention_Cost
+               - P(FN) × Revenue_Lost
 ```
 
 For the Razorpay demo, we use the default threshold (0.5) and the policy engine's
@@ -173,11 +173,11 @@ Running them on any machine produces identical results.
 The complete recovery workflow was validated against the live Render + Supabase deployment:
 
 ```
-Register â†’ Workspace â†’ Policy config â†’ Customer creation
-â†’ POST /api/transactions/simulate  (Rs.4,999 NETWORK_ERROR, UPI)
-â†’ POST /api/recovery/process/{id}  (full AI pipeline)
-â†’ GET  /api/audit                  (8-event audit trail)
-â†’ GET  /api/dashboard/metrics      (updated live)
+Register → Workspace → Policy config → Customer creation
+→ POST /api/transactions/simulate  (Rs.4,999 NETWORK_ERROR, UPI)
+→ POST /api/recovery/process/{id}  (full AI pipeline)
+→ GET  /api/audit                  (8-event audit trail)
+→ GET  /api/dashboard/metrics      (updated live)
 ```
 
 **Verified outcome:**
@@ -194,7 +194,7 @@ Register â†’ Workspace â†’ Policy config â†’ Customer creation
 | Dashboard after | revenueRecovered=Rs.4,999 / recoveryRate=100% |
 
 The 8-step audit trail was verified in order:
-`RISK_DETECTED â†’ RECOVERY_CASE_OPENED â†’ PROBABILITY_CALCULATED â†’ AGENT_DECISION â†’ POLICY_VALIDATED â†’ ACTION_EXECUTED â†’ OUTCOME_RECORDED â†’ RECOVERY_CASE_CLOSED`
+`RISK_DETECTED → RECOVERY_CASE_OPENED → PROBABILITY_CALCULATED → AGENT_DECISION → POLICY_VALIDATED → ACTION_EXECUTED → OUTCOME_RECORDED → RECOVERY_CASE_CLOSED`
 
 A separate 1,500-transaction batch script is documented as a future reproducibility exercise but has not been run against the live database (to avoid polluting shared demo-workspace data). The offline `evaluate.py` metrics on the 1,500-transaction held-out test set represent the same population.
 

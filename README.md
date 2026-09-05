@@ -60,10 +60,10 @@ autonomously executes a recovery strategy.
 
 To help judges evaluate this submission against the Track 03 criteria, here is exactly where our core mechanics are proven in the repository:
 
-- **Problem Taste & Engineering Maturity** â†’ [`docs/design-decisions.md`](docs/design-decisions.md) (Explains our real-world trade-offs: paise-as-integer, deterministic simulation over mock APIs, LLM-recommends vs Engine-authorizes)
-- **AI Judgment & Boundary Enforcement** â†’ [`backend/src/main/java/com/zoqel/policy/PolicyEngine.java`](backend/src/main/java/com/zoqel/policy/PolicyEngine.java) (The deterministic layer that blocks the LLM on insufficient funds, enforces max retries, and handles escalation)
-- **Measured Money Recovered (Build Quality)** â†’ [`evaluation/report.txt`](evaluation/report.txt) and [`docs/evaluation.md`](docs/evaluation.md) (Real ML metrics proving â‚¹54L recovered out of â‚¹60L)
-- **Failure Recovery** â†’ [`docs/failure-analysis.md`](docs/failure-analysis.md) (Documentation of 6 critical bugs we hit during development-like idempotent retries and N+1 queries-and exactly how we fixed them)
+- **Problem Taste & Engineering Maturity** → [`docs/design-decisions.md`](docs/design-decisions.md) (Explains our real-world trade-offs: paise-as-integer, deterministic simulation over mock APIs, LLM-recommends vs Engine-authorizes)
+- **AI Judgment & Boundary Enforcement** → [`backend/src/main/java/com/zoqel/policy/PolicyEngine.java`](backend/src/main/java/com/zoqel/policy/PolicyEngine.java) (The deterministic layer that blocks the LLM on insufficient funds, enforces max retries, and handles escalation)
+- **Measured Money Recovered (Build Quality)** → [`evaluation/report.txt`](evaluation/report.txt) and [`docs/evaluation.md`](docs/evaluation.md) (Real ML metrics proving ₹54L recovered out of ₹60L)
+- **Failure Recovery** → [`docs/failure-analysis.md`](docs/failure-analysis.md) (Documentation of 6 critical bugs we hit during development-like idempotent retries and N+1 queries-and exactly how we fixed them)
 
 ---
 
@@ -173,45 +173,45 @@ flowchart TD
 
 ```text
 zoqel/
-â”œâ”€â”€ backend/
-â”‚   â”œâ”€â”€ src/main/java/com/zoqel/
-â”‚   â”‚   â”œâ”€â”€ agent/           # AI Gateway, LLM decision models, actions
-â”‚   â”‚   â”œâ”€â”€ audit/           # Immutable event logging engine
-â”‚   â”‚   â”œâ”€â”€ auth/            # JWT validation, Demo route guards
-â”‚   â”‚   â”œâ”€â”€ dashboard/       # Aggregation queries for UI metrics & charts
-â”‚   â”‚   â”œâ”€â”€ policy/          # Merchant-defined rules & constraints
-â”‚   â”‚   â”œâ”€â”€ recovery/        # Recovery Case management (Pending/Resolved/Escalated)
-â”‚   â”‚   â”œâ”€â”€ risk/            # Pre-LLM risk evaluation heuristics
-â”‚   â”‚   â”œâ”€â”€ simulator/       # Deterministic background Razorpay simulator
-â”‚   â”‚   â”œâ”€â”€ transaction/     # Core payment processing entities
-â”‚   â”‚   â””â”€â”€ workspace/       # Multi-tenant isolation context
-â”‚   â”œâ”€â”€ src/main/resources/
-â”‚   â”‚   â”œâ”€â”€ db/migration/    # Flyway SQL schemas for Supabase
-â”‚   â”‚   â””â”€â”€ application.yml  # Spring Boot configuration
-â”‚   â”œâ”€â”€ Dockerfile           # Optimized multi-stage build (-Xmx256m -Xss512k)
-â”‚   â””â”€â”€ pom.xml
-â”œâ”€â”€ frontend/
-â”‚   â”œâ”€â”€ src/
-â”‚   â”‚   â”œâ”€â”€ app/             # React app shell & routing
-â”‚   â”‚   â”œâ”€â”€ components/      # UI primitives, charts, metrics, skeletons
-â”‚   â”‚   â”œâ”€â”€ features/        # Domain modules (overview, onboarding, auth)
-â”‚   â”‚   â”œâ”€â”€ services/        # API client bindings (axios)
-â”‚   â”‚   â””â”€â”€ stores/          # Zustand state management
-â”‚   â”œâ”€â”€ package.json
-â”‚   â””â”€â”€ vite.config.ts
-â”œâ”€â”€ docs/
-â”‚   â”œâ”€â”€ architecture.md      # Full system architecture
-â”‚   â”œâ”€â”€ design-decisions.md  # Engineering trade-off rationale
-â”‚   â”œâ”€â”€ evaluation.md        # ML metrics & business impact analysis
-â”‚   â”œâ”€â”€ failure-analysis.md  # 6 real bugs found & fixed during development
-â”‚   â””â”€â”€ production-roadmap.md
-â”œâ”€â”€ evaluation/
-â”‚   â”œâ”€â”€ report.txt           # Held-out test set metrics (Accuracy 0.83, AUC 0.88)
-â”‚   â”œâ”€â”€ results.json
-â”‚   â”œâ”€â”€ confusion_matrix.png
-â”‚   â””â”€â”€ roc_curve.png
-â”œâ”€â”€ .env.example             # All required environment variables documented
-â””â”€â”€ README.md
+├── backend/
+│   ├── src/main/java/com/zoqel/
+│   │   ├── agent/           # AI Gateway, LLM decision models, actions
+│   │   ├── audit/           # Immutable event logging engine
+│   │   ├── auth/            # JWT validation, Demo route guards
+│   │   ├── dashboard/       # Aggregation queries for UI metrics & charts
+│   │   ├── policy/          # Merchant-defined rules & constraints
+│   │   ├── recovery/        # Recovery Case management (Pending/Resolved/Escalated)
+│   │   ├── risk/            # Pre-LLM risk evaluation heuristics
+│   │   ├── simulator/       # Deterministic background Razorpay simulator
+│   │   ├── transaction/     # Core payment processing entities
+│   │   └── workspace/       # Multi-tenant isolation context
+│   ├── src/main/resources/
+│   │   ├── db/migration/    # Flyway SQL schemas for Supabase
+│   │   └── application.yml  # Spring Boot configuration
+│   ├── Dockerfile           # Optimized multi-stage build (-Xmx256m -Xss512k)
+│   └── pom.xml
+├── frontend/
+│   ├── src/
+│   │   ├── app/             # React app shell & routing
+│   │   ├── components/      # UI primitives, charts, metrics, skeletons
+│   │   ├── features/        # Domain modules (overview, onboarding, auth)
+│   │   ├── services/        # API client bindings (axios)
+│   │   └── stores/          # Zustand state management
+│   ├── package.json
+│   └── vite.config.ts
+├── docs/
+│   ├── architecture.md      # Full system architecture
+│   ├── design-decisions.md  # Engineering trade-off rationale
+│   ├── evaluation.md        # ML metrics & business impact analysis
+│   ├── failure-analysis.md  # 6 real bugs found & fixed during development
+│   └── production-roadmap.md
+├── evaluation/
+│   ├── report.txt           # Held-out test set metrics (Accuracy 0.83, AUC 0.88)
+│   ├── results.json
+│   ├── confusion_matrix.png
+│   └── roc_curve.png
+├── .env.example             # All required environment variables documented
+└── README.md
 ```
 
 ---
@@ -435,14 +435,14 @@ tenant isolation.
 
 ## Deployment
 
-**Backend â†’ Render** (Java Web Service):
+**Backend → Render** (Java Web Service):
 
 - Root directory: `backend`
 - Environment: `Docker` (Render detects the multi-stage `Dockerfile`)
 - Environment variables: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `FRONTEND_URL`,
   `JWT_SECRET`. Render sets `PORT` itself.
 
-**Frontend â†’ Cloudflare Workers**:
+**Frontend → Cloudflare Workers**:
 
 - Environment variables: `VITE_API_BASE_URL` (your Render backend URL).
 

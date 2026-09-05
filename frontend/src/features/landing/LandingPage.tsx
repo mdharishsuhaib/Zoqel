@@ -274,7 +274,7 @@ export function LandingPage() {
                 <div className="text-2xl font-bold text-white">Smart Retry Sequence</div>
                 <div className="text-[#9CA3AF] text-sm">Schedule 3 attempts over 72 hours.</div>
                 <div className="inline-block mt-2 px-3 py-1 bg-[#12B76A]/20 border border-[#12B76A]/30 text-[#6CE9A6] rounded text-xs font-bold">
-                  âœ“ POLICY APPROVED
+                  ✓ POLICY APPROVED
                 </div>
               </div>
             </motion.div>
@@ -366,7 +366,7 @@ export function LandingPage() {
           className="relative z-10 max-w-4xl mx-auto px-4"
         >
           <h2 className="text-4xl font-extrabold text-[#101828] mb-6">Ready to stop losing revenue?</h2>
-          <p className="text-xl text-[#667085] max-w-2xl mx-auto mb-10">Start recovering lost revenue today â€” no complex setup, no static retry rules, just autonomous recovery from day one.</p>
+          <p className="text-xl text-[#667085] max-w-2xl mx-auto mb-10">Start recovering lost revenue today — no complex setup, no static retry rules, just autonomous recovery from day one.</p>
           <button onClick={() => navigate('/signup')} className="px-10 py-4 text-lg font-bold rounded-xl text-white bg-[#2B84EA] hover:bg-[#1A6DD0] transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-3">
             Get Started <ArrowRight size={20} className="text-[#93C5FD]" />
           </button>
