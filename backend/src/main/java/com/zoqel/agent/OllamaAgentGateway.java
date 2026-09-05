@@ -81,22 +81,53 @@ public class OllamaAgentGateway implements AgentGateway {
             log.warn("Failed to get recommendation from LLM, returning fallback decision.", e);
         }
 
-        // Fallback
-        boolean highProb = context.getRecoveryProbability() != null && context.getRecoveryProbability() > 0.7;
-        boolean isNetworkOrTimeout = "BANK_TIMEOUT".equals(context.getFailureReason()) || "NETWORK_ERROR".equals(context.getFailureReason());
+        // Smart fallback: use recovery probability + failure type to decide action.
+        // This runs when the LLM is unavailable (e.g. API key not configured).
+        double prob = context.getRecoveryProbability() != null ? context.getRecoveryProbability() : 0.0;
+        String failReason = context.getFailureReason() != null ? context.getFailureReason() : "UNKNOWN";
 
-        if (isNetworkOrTimeout && highProb) {
+        // Inherently unrecoverable by retry
+        boolean unrecoverable = "INSUFFICIENT_FUNDS".equals(failReason) || "DUPLICATE_ATTEMPT".equals(failReason);
+        // Clearly transient errors
+        boolean transientError = "BANK_TIMEOUT".equals(failReason) || "NETWORK_ERROR".equals(failReason);
+
+        if ("INSUFFICIENT_FUNDS".equals(failReason)) {
+            return AgentDecision.builder()
+                    .decision(RecoveryAction.IGNORE)
+                    .reason("Fallback: Insufficient funds — not recoverable by retry.")
+                    .confidence(0.90)
+                    .requiresHuman(false)
+                    .build();
+        }
+
+        if ("DUPLICATE_ATTEMPT".equals(failReason)) {
+            return AgentDecision.builder()
+                    .decision(RecoveryAction.ESCALATE)
+                    .reason("Fallback: Duplicate attempt requires human review to avoid double charge.")
+                    .confidence(0.85)
+                    .requiresHuman(true)
+                    .build();
+        }
+
+        if (prob >= 0.70) {
             return AgentDecision.builder()
                     .decision(RecoveryAction.RETRY)
-                    .reason("Fallback: High probability network issue")
-                    .confidence(0.75)
+                    .reason("Fallback: Recovery probability " + String.format("%.0f", prob * 100) + "% — retrying " + failReason)
+                    .confidence(prob)
+                    .requiresHuman(false)
+                    .build();
+        } else if (prob >= 0.40 && transientError) {
+            return AgentDecision.builder()
+                    .decision(RecoveryAction.RETRY)
+                    .reason("Fallback: Transient error with moderate probability " + String.format("%.0f", prob * 100) + "% — retrying.")
+                    .confidence(prob)
                     .requiresHuman(false)
                     .build();
         } else {
             return AgentDecision.builder()
                     .decision(RecoveryAction.ESCALATE)
-                    .reason("Fallback: Unknown or complex issue requires review")
-                    .confidence(0.6)
+                    .reason("Fallback: Low recovery probability " + String.format("%.0f", prob * 100) + "% — escalating to human agent.")
+                    .confidence(Math.max(prob, 0.50))
                     .requiresHuman(true)
                     .build();
         }
