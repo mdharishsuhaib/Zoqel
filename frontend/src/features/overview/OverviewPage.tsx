@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
@@ -43,10 +43,10 @@ export function OverviewPage() {
           ))
         ) : (
           <>
-            <MetricCard title="Revenue at Risk" value={formatLakhsSymbol(metrics?.revenueAtRiskPaise || 0)} accent="danger" subtitle={Last  + timeRange} />
+            <MetricCard title="Revenue at Risk" value={formatLakhsSymbol(metrics?.revenueAtRiskPaise || 0)} accent="danger" subtitle={`Last ${timeRange}`} />
             <MetricCard title="Recoverable Revenue" value={formatLakhsSymbol((metrics?.recoverableRevenuePaise || 0))} accent="blue" subtitle="Estimated by Zoqel" />
             <MetricCard title="Revenue Recovered" value={formatLakhsSymbol((metrics?.revenueRecoveredPaise || 0))} accent="success" subtitle="Successfully completed" />
-            <MetricCard title="Recovery Rate" value={${Number((metrics?.recoveryRate || 0)).toFixed(1)}%} accent="violet" subtitle="Of recoverable revenue" trend={{ value: '+2.1%', positive: true }} />
+            <MetricCard title="Recovery Rate" value={`${Number((metrics?.recoveryRate || 0)).toFixed(1)}%`} accent="violet" subtitle="Of recoverable revenue" trend={{ value: '+2.1%', positive: true }} />
           </>
         )}
       </div>
@@ -57,13 +57,13 @@ export function OverviewPage() {
           <div className="flex gap-2">
             <button 
               onClick={() => setTimeRange('30D')}
-              className={px-3 py-1 text-sm rounded-md font-medium transition-colors }
+              className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${timeRange === '30D' ? 'bg-[#F2F4F7] text-[#101828]' : 'text-[#667085] hover:bg-[#F9FAFB]'}`}
             >
               30D
             </button>
             <button 
               onClick={() => setTimeRange('7D')}
-              className={px-3 py-1 text-sm rounded-md font-medium transition-colors }
+              className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${timeRange === '7D' ? 'bg-[#F2F4F7] text-[#101828]' : 'text-[#667085] hover:bg-[#F9FAFB]'}`}
             >
               7D
             </button>
@@ -108,7 +108,7 @@ export function OverviewPage() {
                 {recentTx.map(t => (
                   <tr 
                     key={t.id}
-                    onClick={() => navigate('/app/payments/' + t.id)}
+                    onClick={() => navigate(`/app/payments/${t.id}`)}
                     className="border-b border-[#F2F4F7] last:border-0 cursor-pointer hover:bg-[#F9FAFB] transition-colors"
                   >
                     <td className="py-3 text-[#101828] font-medium">{t.id}</td>
