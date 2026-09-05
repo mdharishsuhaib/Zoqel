@@ -1,7 +1,7 @@
 ﻿import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { getDashboardMetrics, getChartData, getTransactions } from '../../services/recoveryService';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { MetricCardSkeleton } from '../../components/ui/LoadingSkeleton';
@@ -10,12 +10,12 @@ import { formatLakhsSymbol } from '../../utils/format';
 import { getAuditEvents } from '../../services/auditService';
 
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import { PipelineVisual } from '../../components/recovery/PipelineVisual';
-import { motion, AnimatePresence } from 'framer-motion';
+
+
 
 export function OverviewPage() {
   const [timeRange, setTimeRange] = useState<'30D' | '7D'>('30D');
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const navigate = useNavigate();
   const { data: metrics, isLoading: isMetricsLoading, isError: isMetricsError } = useQuery({ queryKey: ['metrics'], queryFn: getDashboardMetrics, refetchInterval: 15000, refetchIntervalInBackground: true, retry: 2 });
   const { data: chartData, isLoading: isChartLoading } = useQuery({ queryKey: ['chart'], queryFn: getChartData, refetchInterval: 15000, refetchIntervalInBackground: true, retry: 2 });
   const { data: txData } = useQuery({ queryKey: ['transactions', 0, 5], queryFn: () => getTransactions(0, 5), refetchInterval: 15000, refetchIntervalInBackground: true, retry: 2 });
@@ -162,6 +162,7 @@ export function OverviewPage() {
     </div>
   );
 }
+
 
 
 
