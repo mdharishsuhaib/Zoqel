@@ -1,10 +1,27 @@
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Activity, Brain, Lock, Zap, CheckCircle2, AlertTriangle, ShieldCheck, BarChart3, Database, Cpu, Target, Radar, Waypoints } from 'lucide-react';
+import { ArrowRight, ArrowUp, Activity, Brain, Lock, Zap, CheckCircle2, AlertTriangle, ShieldCheck, BarChart3, Database, Cpu, Target, Radar, Waypoints } from 'lucide-react';
 import { Logo } from '../../components/ui/Logo';
 
 export function LandingPage() {
+
   const navigate = useNavigate();
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if user is scrolled down more than 400px
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] text-[#101828] font-sans selection:bg-[#2B84EA] selection:text-white">
@@ -275,7 +292,7 @@ export function LandingPage() {
       {/* Why Zoqel Comparison */}
       <div id="comparison" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-[#101828] mb-4">Why Zoqel?</h2>
+          <h2 className="text-3xl font-bold text-[#101828] mb-4">Why Zoqel|</h2>
           <p className="text-lg text-[#667085]">Static rules leave money on the table. Autonomous agents recover it.</p>
         </div>
         
@@ -348,7 +365,7 @@ export function LandingPage() {
           initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
           className="relative z-10 max-w-4xl mx-auto px-4"
         >
-          <h2 className="text-4xl font-extrabold text-[#101828] mb-6">Ready to stop losing revenue?</h2>
+          <h2 className="text-4xl font-extrabold text-[#101828] mb-6">Ready to stop losing revenue|</h2>
           <p className="text-xl text-[#667085] max-w-2xl mx-auto mb-10">Start recovering lost revenue today — no complex setup, no static retry rules, just autonomous recovery from day one.</p>
           <button onClick={() => navigate('/signup')} className="px-10 py-4 text-lg font-bold rounded-xl text-white bg-[#2B84EA] hover:bg-[#1A6DD0] transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-3">
             Get Started <ArrowRight size={20} className="text-[#93C5FD]" />
@@ -374,6 +391,22 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Scroll to top button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-8 right-8 p-3 rounded-full bg-[#2B84EA] text-white shadow-lg hover:bg-[#1A6DD0] transition-colors z-50 flex items-center justify-center"
+            aria-label="Scroll to top"
+          >
+            <ArrowUp size={24} />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
